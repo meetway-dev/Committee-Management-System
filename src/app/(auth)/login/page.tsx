@@ -1,13 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useTransition } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useTransition, Suspense } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,10 +17,35 @@ import { loginSchema, type LoginInput } from "@/schemas/auth.schema";
 import { loginUser, loginWithGoogle } from "@/actions/auth.actions";
 import { Separator } from "@/components/ui/separator";
 
+const AUTH_ERRORS: Record<string, string> = {
+  AccessDenied: "Access denied. Please try again or use a different account.",
+  Configuration: "Server configuration error. Please try again later.",
+  Verification: "Verification link has expired. Please request a new one.",
+  Default: "Something went wrong. Please try again.",
+};
+
 export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginContent />
+    </Suspense>
+  );
+}
+
+function LoginContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
   const [showPassword, setShowPassword] = useState(false);
+
+  useEffect(() => {
+    const error = searchParams.get("error");
+    if (error) {
+      const message = AUTH_ERRORS[error] || AUTH_ERRORS.Default;
+      toast.error(message);
+      router.replace("/login", { scroll: false });
+    }
+  }, [searchParams, router]);
 
   const {
     register,

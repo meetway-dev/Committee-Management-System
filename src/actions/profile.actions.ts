@@ -31,7 +31,6 @@ export async function updateProfile(data: {
   country?: string;
   city?: string;
   bio?: string;
-  image?: string;
 }): Promise<ApiResponse> {
   try {
     const session = await auth();

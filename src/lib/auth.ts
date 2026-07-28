@@ -10,6 +10,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     Google({
       clientId: process.env.AUTH_GOOGLE_ID,
       clientSecret: process.env.AUTH_GOOGLE_SECRET,
+      authorization: {
+        params: {
+          prompt: "select_account",
+        },
+      },
     }),
     Credentials({
       credentials: {
@@ -51,21 +56,34 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   callbacks: {
     async signIn({ user, account }) {
       if (account?.provider === "google") {
-        await connectDB();
+        try {
+          await connectDB();
 
-        const existingUser = await User.findOne({ email: user.email });
+          const existingUser = await User.findOne({ email: user.email });
 
-        if (!existingUser) {
-          await User.create({
-            name: user.name ?? undefined,
-            email: user.email ?? undefined,
-            image: user.image ?? undefined,
-            provider: "google",
-            providerId: account.providerAccountId,
-            emailVerified: new Date(),
-            status: "active",
-          });
-        } else if (existingUser.status !== "active") {
+          if (!existingUser) {
+            await User.create({
+              name: user.name ?? undefined,
+              email: user.email ?? undefined,
+              image: user.image ?? undefined,
+              provider: "google",
+              providerId: account.providerAccountId,
+              emailVerified: new Date(),
+              status: "active",
+            });
+          } else if (existingUser.status !== "active") {
+            return false;
+          } else {
+            // Update provider info and image for existing users signing in with Google
+            await User.findByIdAndUpdate(existingUser._id, {
+              image: user.image || existingUser.image,
+              provider: "google",
+              providerId: account.providerAccountId,
+              emailVerified: existingUser.emailVerified || new Date(),
+            });
+          }
+        } catch (error) {
+          console.error("Google sign-in error:", error);
           return false;
         }
       }

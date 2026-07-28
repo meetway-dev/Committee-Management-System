@@ -21,7 +21,6 @@ Installable
 - Auth.js
 - React Hook Form
 - Zod
-- Cloudinary
 - Framer Motion
 
 ## Coding Rules

@@ -7,7 +7,6 @@ export const updateProfileSchema = z.object({
   country: z.string().optional(),
   city: z.string().optional(),
   bio: z.string().max(500).optional(),
-  image: z.string().url().optional(),
 });
 
 export const changePasswordSchema = z
