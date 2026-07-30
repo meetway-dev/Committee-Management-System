@@ -8,9 +8,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <Header />
       <div className="flex">
         <Sidebar />
-        <main className="flex-1 lg:ml-64 pt-16 pb-20 lg:pb-6">
-          <div className="container mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-            {children}
+        <main className="flex-1 pt-16 pb-24 lg:pl-64 lg:pb-8">
+          <div className="mx-auto max-w-7xl px-2 py-3 sm:px-4 lg:px-6">
+            <div className="rounded-2xl border border-border/60 bg-card/80 p-2 shadow-[0_8px_24px_rgba(15,23,42,0.04)] backdrop-blur-sm sm:p-3">
+              {children}
+            </div>
           </div>
         </main>
       </div>

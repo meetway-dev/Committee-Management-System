@@ -51,11 +51,11 @@ export function Header() {
       <div className="flex w-full items-center justify-between px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-3">
           <Sheet>
-            <SheetTrigger className="lg:hidden">
-              <Menu className="h-5 w-5" />
+            <SheetTrigger className="rounded-lg border border-border/70 bg-muted/60 p-2 lg:hidden">
+              <Menu className="h-4 w-4" />
             </SheetTrigger>
-            <SheetContent side="left" className="w-72 p-0 bg-card">
-              <div className="flex h-16 items-center border-b border-border px-6">
+            <SheetContent side="left" className="w-72 border-r border-border/70 bg-sidebar p-0 text-sidebar-foreground">
+              <div className="flex h-16 items-center border-b border-sidebar-border px-6">
                 <Link href="/dashboard" className="flex items-center gap-2">
                   <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary">
                     <Sparkles className="h-3.5 w-3.5 text-white" />
@@ -65,7 +65,7 @@ export function Header() {
                   </span>
                 </Link>
               </div>
-              <nav className="space-y-1 p-4">
+              <nav className="space-y-1 p-3.5">
                 {NAV_ITEMS.sidebar.map((item) => {
                   const Icon = iconMap[item.icon];
                   const isActive = pathname === item.href;
@@ -74,13 +74,13 @@ export function Header() {
                       key={item.href}
                       href={item.href}
                       className={cn(
-                        "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                        "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all",
                         isActive
-                          ? "bg-primary/10 text-primary"
-                          : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                          ? "bg-primary text-primary-foreground"
+                          : "text-sidebar-foreground/75 hover:bg-sidebar-accent hover:text-sidebar-foreground"
                       )}
                     >
-                      {Icon && <Icon className="h-5 w-5" />}
+                      {Icon && <Icon className="h-4 w-4" />}
                       {item.label}
                     </Link>
                   );

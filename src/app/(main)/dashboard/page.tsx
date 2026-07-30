@@ -25,7 +25,7 @@ export default async function DashboardPage() {
   const recentCommittees = committees.slice(0, 6);
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <PageHeader
         title="Dashboard"
         description="Overview of your committees and activity"
@@ -41,7 +41,7 @@ export default async function DashboardPage() {
         }
       />
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
           title="Total Committees"
           value={stats?.totalCommittees ?? 0}
@@ -68,9 +68,9 @@ export default async function DashboardPage() {
         />
       </div>
 
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold">Recent Committees</h2>
+      <div className="space-y-3">
+        <div className="flex items-center justify-between gap-2">
+          <h2 className="text-base font-semibold">Recent Committees</h2>
           {committees.length > 6 && (
             <Link
               href="/committees"

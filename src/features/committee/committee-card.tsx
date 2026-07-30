@@ -30,25 +30,24 @@ export function CommitteeCard({ committee }: CommitteeCardProps) {
 
   return (
     <Link href={`/committees/${committee._id}`}>
-      <Card className="group transition-all hover:shadow-md hover:border-primary/20">
-        <CardHeader className="pb-3">
+      <Card className="group border-border/70 bg-card/95 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/20 hover:shadow-md">
+        <CardHeader className="px-4 pb-3 pt-4">
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0 flex-1">
-              <CardTitle className="truncate text-base font-bold font-heading group-hover:text-primary transition-colors">
+              <CardTitle className="truncate text-sm font-bold font-heading text-foreground transition-colors group-hover:text-primary">
                 {committee.name}
               </CardTitle>
-              <p className="mt-0.5 text-sm text-muted-foreground">
-                {formatCurrency(committee.contributionAmount, committee.currency)}{" "}
-                / {committee.frequency}
+              <p className="mt-1 text-xs text-muted-foreground">
+                {formatCurrency(committee.contributionAmount, committee.currency)} / {committee.frequency}
               </p>
             </div>
             <StatusBadge status={committee.status} />
           </div>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-3 px-4 pb-4 pt-0">
           {committee.status === "active" && (
             <div className="space-y-1.5">
-              <div className="flex items-center justify-between text-xs text-muted-foreground">
+              <div className="flex items-center justify-between text-[11px] text-muted-foreground">
                 <span>
                   Round {committee.currentRound} of {committee.totalRounds}
                 </span>
@@ -58,14 +57,14 @@ export function CommitteeCard({ committee }: CommitteeCardProps) {
             </div>
           )}
 
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4 text-xs text-muted-foreground">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex min-w-0 flex-1 items-center gap-3 text-[11px] text-muted-foreground">
               <span className="flex items-center gap-1">
                 <Users className="h-3.5 w-3.5" />
-                {committee.memberCount ?? committee.maxMembers} members
+                {committee.memberCount ?? committee.maxMembers}
               </span>
               {committee.startDate && (
-                <span className="flex items-center gap-1">
+                <span className="flex items-center gap-1 truncate">
                   <Calendar className="h-3.5 w-3.5" />
                   {new Date(committee.startDate).toLocaleDateString("en-US", {
                     month: "short",
@@ -76,7 +75,7 @@ export function CommitteeCard({ committee }: CommitteeCardProps) {
             </div>
 
             {committee.admin && typeof committee.admin === "object" && (
-              <Avatar className="h-6 w-6">
+              <Avatar className="h-7 w-7">
                 <AvatarImage
                   src={committee.admin.image || ""}
                   alt={committee.admin.name || ""}
@@ -113,7 +112,7 @@ export function CommitteeCardList({
   }
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
       {committees.map((committee) => (
         <CommitteeCard key={committee._id} committee={committee} />
       ))}

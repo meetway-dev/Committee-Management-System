@@ -1,11 +1,11 @@
 "use server";
 
+import { getBaseUrl, normalizeRedirectPath } from "@/lib/app-url";
 import { signIn, signOut } from "@/lib/auth";
 import { connectDB } from "@/lib/db";
 import User from "@/models/User";
 import { loginSchema, registerSchema } from "@/schemas/auth.schema";
 import type { ApiResponse } from "@/types/api";
-import { getBaseUrl, normalizeRedirectPath } from "@/lib/app-url";
 import bcrypt from "bcryptjs";
 
 async function getAppUrl(path = "/") {

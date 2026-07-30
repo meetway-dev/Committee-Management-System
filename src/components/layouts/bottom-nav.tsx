@@ -18,8 +18,8 @@ export function BottomNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-border/70 bg-card/95 backdrop-blur-xl lg:hidden">
-      <div className="flex h-16 items-center justify-around px-2 pb-safe">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-border/70 bg-background/95 shadow-[0_-8px_24px_rgba(15,23,42,0.08)] backdrop-blur-xl lg:hidden">
+      <div className="mx-auto flex h-16 max-w-md items-center justify-around gap-1 px-2 pb-safe">
         {NAV_ITEMS.main.map((item) => {
           const Icon = iconMap[item.icon];
           const isActive =
@@ -29,13 +29,13 @@ export function BottomNav() {
               key={item.href}
               href={item.href}
               className={cn(
-                "flex flex-col items-center gap-1 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors",
+                "flex flex-col items-center justify-center gap-1 rounded-xl px-2 py-1.5 text-[11px] font-medium transition-all",
                 isActive
-                  ? "text-primary"
-                  : "text-muted-foreground hover:text-foreground"
+                  ? "bg-primary/10 text-primary"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
               )}
             >
-              {Icon && <Icon className={cn("h-5 w-5", isActive && "text-primary")} />}
+              {Icon && <Icon className={cn("h-4 w-4", isActive && "text-primary")} />}
               <span>{item.label}</span>
             </Link>
           );
