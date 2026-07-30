@@ -103,10 +103,10 @@ export async function loginUser(
 export async function loginWithGoogle(redirectTo?: string) {
   const safeRedirect = normalizeRedirectPath(redirectTo, "/dashboard");
   await signIn("google", {
-    redirectTo: await getAppUrl(safeRedirect),
+    redirectTo: safeRedirect,
   });
 }
 
 export async function logoutUser() {
-  await signOut({ redirectTo: await getAppUrl("/login") });
+  await signOut({ redirectTo: "/login" });
 }

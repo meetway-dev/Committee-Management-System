@@ -35,10 +35,11 @@ export async function getBaseUrl(path = "/", requestHeaders?: HeaderLike) {
     return new URL(path, normalizeBaseUrl(`https://${process.env.VERCEL_URL}`)).toString();
   }
 
-  const fallbackBaseUrl =
-    process.env.NODE_ENV === "production" ? "https://localhost:3000" : "http://localhost:3000";
+  if (process.env.NODE_ENV === "production") {
+    return path.startsWith("/") ? path : `/${path}`;
+  }
 
-  return new URL(path, fallbackBaseUrl).toString();
+  return new URL(path, "http://localhost:3000").toString();
 }
 
 export function normalizeRedirectPath(value: string | null | undefined, fallback = "/dashboard") {
