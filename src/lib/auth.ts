@@ -4,8 +4,13 @@ import Google from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
 import { connectDB } from "@/lib/db";
 import User from "@/models/User";
+import { authConfig } from "@/lib/auth.config";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  // Shared, edge-safe base config (trustHost, pages, session strategy).
+  // Node-only providers and DB callbacks are added below and stay out of the
+  // Edge middleware bundle (see src/middleware.ts).
+  ...authConfig,
   providers: [
     Google({
       clientId: process.env.AUTH_GOOGLE_ID,
@@ -49,10 +54,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
     }),
   ],
-  pages: {
-    signIn: "/login",
-    error: "/login",
-  },
   callbacks: {
     async signIn({ user, account }) {
       if (account?.provider === "google") {
@@ -109,8 +110,5 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
       return session;
     },
-  },
-  session: {
-    strategy: "jwt",
   },
 });

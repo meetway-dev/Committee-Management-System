@@ -1,16 +1,16 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { forgotPasswordSchema, type ForgotPasswordInput } from "@/schemas/auth.schema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useTransition } from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeft, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { forgotPasswordSchema, type ForgotPasswordInput } from "@/schemas/auth.schema";
 
 export default function ForgotPasswordPage() {
   const [isPending, startTransition] = useTransition();
@@ -24,10 +24,8 @@ export default function ForgotPasswordPage() {
     defaultValues: { email: "" },
   });
 
-  function onSubmit(data: ForgotPasswordInput) {
+  function onSubmit() {
     startTransition(async () => {
-      // TODO: Implement actual password reset email
-      console.log("Reset email:", data.email);
       toast.success("If an account exists with this email, a reset link has been sent.");
     });
   }

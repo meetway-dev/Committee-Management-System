@@ -1,21 +1,23 @@
+import { ServiceWorkerRegistration } from "@/components/shared/sw-register";
+import { Toaster } from "@/components/ui/sonner";
+import { AuthProvider } from "@/providers/auth-provider";
+import { ThemeProvider } from "@/providers/theme-provider";
 import type { Metadata, Viewport } from "next";
 import { Inter, Plus_Jakarta_Sans } from "next/font/google";
-import { Toaster } from "@/components/ui/sonner";
-import { ThemeProvider } from "@/providers/theme-provider";
-import { AuthProvider } from "@/providers/auth-provider";
-import { ServiceWorkerRegistration } from "@/components/shared/sw-register";
 import "./globals.css";
 
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
-  display: "swap",
+  preload: true,
+  fallback: ["system-ui", "sans-serif"],
 });
 
 const plusJakarta = Plus_Jakarta_Sans({
   variable: "--font-plus-jakarta",
   subsets: ["latin"],
-  display: "swap",
+  preload: true,
+  fallback: ["system-ui", "sans-serif"],
   weight: ["400", "500", "600", "700", "800"],
 });
 
@@ -58,7 +60,7 @@ export default function RootLayout({
           <ThemeProvider>
             {children}
             <Toaster position="top-center" richColors closeButton />
-            <ServiceWorkerRegistration />
+            {process.env.NODE_ENV === "production" && <ServiceWorkerRegistration />}
           </ThemeProvider>
         </AuthProvider>
       </body>

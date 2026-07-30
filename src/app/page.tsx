@@ -1,16 +1,16 @@
-import Link from "next/link";
-import {
-  Shield,
-  Users,
-  CreditCard,
-  BarChart3,
-  ArrowRight,
-  Sparkles,
-  Globe,
-  Lock,
-} from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import {
+    ArrowRight,
+    BarChart3,
+    CreditCard,
+    Globe,
+    Lock,
+    Shield,
+    Sparkles,
+    Users,
+} from "lucide-react";
+import Link from "next/link";
 
 const features = [
   {
@@ -182,7 +182,7 @@ export default function LandingPage() {
               </p>
             </div>
             <div className="mx-auto mt-16 grid max-w-5xl gap-6 sm:grid-cols-2">
-              {features.map((feature, i) => (
+              {features.map((feature) => (
                 <div
                   key={feature.title}
                   className="group relative rounded-2xl border bg-card p-8 transition-all duration-300 hover:border-primary/30 hover:shadow-xl hover:shadow-primary/5"

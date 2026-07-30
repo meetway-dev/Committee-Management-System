@@ -1,43 +1,42 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "sonner";
-import Link from "next/link";
-import { cn } from "@/lib/utils";
-import { buttonVariants } from "@/components/ui/button";
-import { Button } from "@/components/ui/button";
+import { createCommittee } from "@/actions/committee.actions";
+import { PageHeader } from "@/components/shared/page-header";
+import { Button, buttonVariants } from "@/components/ui/button";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { PageHeader } from "@/components/shared/page-header";
-import {
-  createCommitteeSchema,
-  type CreateCommitteeInput,
-} from "@/schemas/committee.schema";
-import { createCommittee } from "@/actions/committee.actions";
-import {
-  COMMITTEE_FREQUENCIES,
-  COMMITTEE_VISIBILITIES,
-  CURRENCIES,
+    COMMITTEE_FREQUENCIES,
+    COMMITTEE_VISIBILITIES,
+    CURRENCIES,
 } from "@/constants";
-import { Users, ArrowLeft, Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
+import {
+    createCommitteeSchema,
+    type CreateCommitteeInput,
+} from "@/schemas/committee.schema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ArrowLeft, Loader2, Users } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 export default function CreateCommitteePage() {
   const router = useRouter();
@@ -47,7 +46,7 @@ export default function CreateCommitteePage() {
     register,
     handleSubmit,
     setValue,
-    watch,
+    getValues,
     formState: { errors },
   } = useForm<CreateCommitteeInput>({
     resolver: zodResolver(createCommitteeSchema),
@@ -62,6 +61,11 @@ export default function CreateCommitteePage() {
       gracePeriodDays: 3,
     },
   });
+
+  // Controlled values synced with the form to avoid passing `watch()` directly
+  const [currencyVal, setCurrencyVal] = useState<string>(() => getValues("currency") || "PKR");
+  const [frequencyVal, setFrequencyVal] = useState<string>(() => getValues("frequency") || "monthly");
+  const [visibilityVal, setVisibilityVal] = useState<string>(() => getValues("visibility") || "private");
 
   async function onSubmit(data: CreateCommitteeInput) {
     setLoading(true);
@@ -173,8 +177,8 @@ export default function CreateCommitteePage() {
               <div className="space-y-2">
                 <Label htmlFor="currency">Currency</Label>
                 <Select
-                  value={watch("currency")}
-                  onValueChange={(v) => { if (v) setValue("currency", v); }}
+                  value={currencyVal}
+                  onValueChange={(v) => { if (v) { setCurrencyVal(v); setValue("currency", v); } }}
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -193,12 +197,9 @@ export default function CreateCommitteePage() {
               <div className="space-y-2">
                 <Label htmlFor="frequency">Frequency *</Label>
                 <Select
-                  value={watch("frequency")}
+                  value={frequencyVal}
                   onValueChange={(v) => {
-                    if (v) setValue(
-                      "frequency",
-                      v as "daily" | "weekly" | "monthly"
-                    );
+                    if (v) { setFrequencyVal(v); setValue("frequency", v as "daily" | "weekly" | "monthly"); }
                   }}
                 >
                   <SelectTrigger>
@@ -298,15 +299,12 @@ export default function CreateCommitteePage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="visibility">Visibility</Label>
+              <div className="space-y-2">
+                <Label htmlFor="visibility">Visibility</Label>
               <Select
-                value={watch("visibility")}
+                value={visibilityVal}
                 onValueChange={(v) => {
-                  if (v) setValue(
-                    "visibility",
-                    v as "private" | "public" | "invite-only"
-                  );
+                  if (v) { setVisibilityVal(v); setValue("visibility", v as "private" | "public" | "invite-only"); }
                 }}
               >
                 <SelectTrigger>

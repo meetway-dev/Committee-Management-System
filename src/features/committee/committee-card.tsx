@@ -1,19 +1,17 @@
 import Link from "next/link";
-import { cn } from "@/lib/utils";
-import { buttonVariants } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Progress } from "@/components/ui/progress";
+// removed unused imports: cn, buttonVariants
 import { StatusBadge } from "@/components/shared/status-badge";
-import { formatCurrency } from "@/utils/format";
-import { getInitials } from "@/utils/format";
-import { Users, Calendar, ArrowRight } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+    Card,
+    CardContent,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 import type { ICommittee } from "@/types/committee";
+import { formatCurrency, getInitials } from "@/utils/format";
+import { Calendar, Users } from "lucide-react";
 
 interface PopulatedCommittee extends Omit<ICommittee, "admin"> {
   admin?: string | { name?: string; image?: string };

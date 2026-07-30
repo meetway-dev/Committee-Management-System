@@ -37,6 +37,7 @@ function LoginContent() {
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
   const [showPassword, setShowPassword] = useState(false);
+  const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
 
   useEffect(() => {
     const error = searchParams.get("error");
@@ -61,10 +62,13 @@ function LoginContent() {
       const formData = new FormData();
       formData.append("email", data.email);
       formData.append("password", data.password);
-      const result = await loginUser(formData);
+      const result = await loginUser(formData, callbackUrl);
       if (result.success) {
+        const redirectTo = typeof result.data === "object" && result.data && "redirectTo" in result.data
+          ? String((result.data as { redirectTo?: string }).redirectTo)
+          : "/dashboard";
         toast.success("Logged in successfully");
-        router.push("/dashboard");
+        router.push(redirectTo);
       } else {
         toast.error(result.error || "Login failed");
       }
@@ -142,7 +146,9 @@ function LoginContent() {
           </span>
         </div>
 
-        <form action={loginWithGoogle}>
+        <form action={async () => {
+          await loginWithGoogle(callbackUrl);
+        }}>
           <Button type="submit" variant="outline" className="w-full">
             <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
               <path

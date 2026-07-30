@@ -1,10 +1,9 @@
 import Link from "next/link";
-import { cn } from "@/lib/utils";
-import { buttonVariants } from "@/components/ui/button";
+// removed unused imports: cn, buttonVariants
+import { getAdminStats } from "@/actions/admin.actions";
 import { PageHeader } from "@/components/shared/page-header";
 import { StatCard } from "@/components/shared/stat-card";
-import { getAdminStats } from "@/actions/admin.actions";
-import { LayoutDashboard, Users, Building, CreditCard, LifeBuoy, ArrowRight } from "lucide-react";
+import { ArrowRight, Building, CreditCard, LayoutDashboard, LifeBuoy, Users } from "lucide-react";
 
 export default async function AdminDashboardPage() {
   const stats = await getAdminStats();

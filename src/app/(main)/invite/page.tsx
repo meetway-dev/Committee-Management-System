@@ -1,22 +1,21 @@
 "use client";
 
-import { Suspense, useState } from "react";
-import { useSearchParams } from "next/navigation";
-import { useSession } from "next-auth/react";
-import { toast } from "sonner";
-import Link from "next/link";
-import { cn } from "@/lib/utils";
-import { buttonVariants } from "@/components/ui/button";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { acceptInvitation } from "@/actions/member.actions";
-import { Users, Loader2, CheckCircle2, XCircle } from "lucide-react";
+import { Button, buttonVariants } from "@/components/ui/button";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
+import { cn } from "@/lib/utils";
+import { CheckCircle2, Loader2, Users, XCircle } from "lucide-react";
+import { useSession } from "next-auth/react";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { Suspense, useState } from "react";
+import { toast } from "sonner";
 
 export default function InvitePage() {
   return (
@@ -34,7 +33,7 @@ export default function InvitePage() {
 
 function InviteContent() {
   const searchParams = useSearchParams();
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const token = searchParams.get("token");
 
   const [loading, setLoading] = useState(false);

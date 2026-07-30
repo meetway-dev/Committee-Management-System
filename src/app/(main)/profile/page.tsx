@@ -1,41 +1,41 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useSession } from "next-auth/react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "sonner";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
 } from "@/components/ui/select";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Separator } from "@/components/ui/separator";
+import { Textarea } from "@/components/ui/textarea";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+// Separator removed (unused)
+import { changePassword, getProfile, updateProfile } from "@/actions/profile.actions";
 import { PageHeader } from "@/components/shared/page-header";
-import {
-  updateProfileSchema,
-  changePasswordSchema,
-  type UpdateProfileInput,
-  type ChangePasswordInput,
-} from "@/schemas/profile.schema";
-import { updateProfile, changePassword, getProfile } from "@/actions/profile.actions";
-import { getInitials } from "@/utils/format";
 import { COUNTRIES } from "@/constants";
-import { UserCircle, Loader2 } from "lucide-react";
+import {
+    changePasswordSchema,
+    updateProfileSchema,
+    type ChangePasswordInput,
+    type UpdateProfileInput,
+} from "@/schemas/profile.schema";
+import { getInitials } from "@/utils/format";
+import { Loader2, UserCircle } from "lucide-react";
 
 export default function ProfilePage() {
   const { data: session } = useSession();
@@ -65,7 +65,10 @@ export default function ProfilePage() {
       }
     }
     loadProfile();
-  }, []);
+  }, [profileForm]);
+
+  // Use controlled country value to avoid passing `watch()` into JSX directly
+  const [countryVal, setCountryVal] = useState<string>(() => profileForm.getValues("country") || "");
 
   async function onProfileSubmit(data: UpdateProfileInput) {
     setProfileLoading(true);
@@ -164,8 +167,8 @@ export default function ProfilePage() {
               <div className="space-y-2">
                 <Label htmlFor="country">Country</Label>
                 <Select
-                  value={profileForm.watch("country") || ""}
-                  onValueChange={(v) => profileForm.setValue("country", v ?? "")}
+                  value={countryVal}
+                  onValueChange={(v) => { setCountryVal(v ?? ""); profileForm.setValue("country", v ?? ""); }}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select country" />

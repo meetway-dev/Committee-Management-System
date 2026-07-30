@@ -1,28 +1,25 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "sonner";
-import Link from "next/link";
-import { cn } from "@/lib/utils";
-import { buttonVariants } from "@/components/ui/button";
-import { Button } from "@/components/ui/button";
+import { inviteMember } from "@/actions/member.actions";
+import { PageHeader } from "@/components/shared/page-header";
+import { Button, buttonVariants } from "@/components/ui/button";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { PageHeader } from "@/components/shared/page-header";
+import { cn } from "@/lib/utils";
 import { inviteMemberSchema, type InviteMemberInput } from "@/schemas/member.schema";
-import { inviteMember } from "@/actions/member.actions";
-import { UserPlus, ArrowLeft, Loader2, Copy, CheckCircle2 } from "lucide-react";
-import { use } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ArrowLeft, CheckCircle2, Copy, Loader2, UserPlus } from "lucide-react";
+import Link from "next/link";
+import { use, useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -30,7 +27,6 @@ interface PageProps {
 
 export default function InviteMemberPage({ params }: PageProps) {
   const { id } = use(params);
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [inviteLink, setInviteLink] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);

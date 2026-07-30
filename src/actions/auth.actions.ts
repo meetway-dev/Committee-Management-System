@@ -1,11 +1,16 @@
 "use server";
 
-import bcrypt from "bcryptjs";
 import { signIn, signOut } from "@/lib/auth";
 import { connectDB } from "@/lib/db";
 import User from "@/models/User";
 import { loginSchema, registerSchema } from "@/schemas/auth.schema";
 import type { ApiResponse } from "@/types/api";
+import { getBaseUrl, normalizeRedirectPath } from "@/lib/app-url";
+import bcrypt from "bcryptjs";
+
+async function getAppUrl(path = "/") {
+  return getBaseUrl(path);
+}
 
 export async function registerUser(
   formData: FormData
@@ -61,7 +66,10 @@ export async function registerUser(
   }
 }
 
-export async function loginUser(formData: FormData): Promise<ApiResponse> {
+export async function loginUser(
+  formData: FormData,
+  redirectTo = "/dashboard"
+): Promise<ApiResponse> {
   try {
     const data = {
       email: formData.get("email") as string,
@@ -82,16 +90,23 @@ export async function loginUser(formData: FormData): Promise<ApiResponse> {
       redirect: false,
     });
 
-    return { success: true, message: "Logged in successfully" };
+    return {
+      success: true,
+      message: "Logged in successfully",
+      data: { redirectTo: normalizeRedirectPath(redirectTo, "/dashboard") },
+    };
   } catch {
     return { success: false, error: "Invalid email or password" };
   }
 }
 
-export async function loginWithGoogle() {
-  await signIn("google", { redirectTo: "/dashboard" });
+export async function loginWithGoogle(redirectTo?: string) {
+  const safeRedirect = normalizeRedirectPath(redirectTo, "/dashboard");
+  await signIn("google", {
+    redirectTo: await getAppUrl(safeRedirect),
+  });
 }
 
 export async function logoutUser() {
-  await signOut({ redirectTo: "/login" });
+  await signOut({ redirectTo: await getAppUrl("/login") });
 }
