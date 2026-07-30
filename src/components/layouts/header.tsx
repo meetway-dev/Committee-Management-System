@@ -47,15 +47,15 @@ export function Header() {
   const user = session?.user;
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 flex h-16 items-center border-b bg-background/80 backdrop-blur-md">
-      <div className="flex w-full items-center justify-between px-4">
+    <header className="fixed top-0 left-0 right-0 z-50 flex h-16 items-center border-b border-border/70 bg-background/95 backdrop-blur-xl shadow-sm transition-colors duration-200">
+      <div className="flex w-full items-center justify-between px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-3">
           <Sheet>
             <SheetTrigger className="lg:hidden">
               <Menu className="h-5 w-5" />
             </SheetTrigger>
-            <SheetContent side="left" className="w-72 p-0">
-              <div className="flex h-16 items-center border-b px-6">
+            <SheetContent side="left" className="w-72 p-0 bg-card">
+              <div className="flex h-16 items-center border-b border-border px-6">
                 <Link href="/dashboard" className="flex items-center gap-2">
                   <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary">
                     <Sparkles className="h-3.5 w-3.5 text-white" />

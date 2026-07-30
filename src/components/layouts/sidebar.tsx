@@ -39,8 +39,8 @@ export function Sidebar() {
   const user = session?.user;
 
   return (
-    <aside className="fixed left-0 top-16 hidden h-[calc(100vh-4rem)] w-64 flex-col border-r bg-background lg:flex">
-      <nav className="flex-1 space-y-1 p-4">
+    <aside className="fixed left-0 top-16 hidden h-[calc(100vh-4rem)] w-64 flex-col border-r border-border/70 bg-card shadow-sm lg:flex">
+      <nav className="flex-1 space-y-1 overflow-y-auto p-4">
         {NAV_ITEMS.sidebar.map((item) => {
           const Icon = iconMap[item.icon];
           const isActive =
