@@ -65,6 +65,7 @@ export default function CreateCommitteePage() {
   // Controlled values synced with the form to avoid passing `watch()` directly
   const [currencyVal, setCurrencyVal] = useState<string>(() => getValues("currency") || "PKR");
   const [frequencyVal, setFrequencyVal] = useState<string>(() => getValues("frequency") || "monthly");
+  const [turnModeVal, setTurnModeVal] = useState<string>(() => getValues("turnMode") || "random");
   const [visibilityVal, setVisibilityVal] = useState<string>(() => getValues("visibility") || "private");
 
   async function onSubmit(data: CreateCommitteeInput) {
@@ -215,7 +216,25 @@ export default function CreateCommitteePage() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="lateFee">Late Fee</Label>
+                <Label htmlFor="turnMode">Turn Order</Label>
+                <Select
+                  value={turnModeVal}
+                  onValueChange={(v) => {
+                    if (v) { setTurnModeVal(v); setValue("turnMode", v as "random" | "fixed"); }
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="random">Random</SelectItem>
+                    <SelectItem value="fixed">Fixed</SelectItem>
+                  </SelectContent>
+                </Select>
+                <input type="hidden" value={turnModeVal} {...register("turnMode")} />
+                <p className="text-xs text-muted-foreground">
+                  Random is assigned when the committee starts. Fixed shows turn order immediately.
+                </p>
                 <Input
                   id="lateFee"
                   type="number"

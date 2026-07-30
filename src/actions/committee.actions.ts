@@ -1,12 +1,12 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { connectDB } from "@/lib/db";
 import Committee from "@/models/Committee";
 import CommitteeMember from "@/models/CommitteeMember";
 import { createCommitteeSchema } from "@/schemas/committee.schema";
 import type { ApiResponse } from "@/types/api";
+import { revalidatePath } from "next/cache";
 
 export async function createCommittee(
   formData: FormData
@@ -30,6 +30,7 @@ export async function createCommittee(
       lateFee: Number(formData.get("lateFee")) || 0,
       gracePeriodDays: Number(formData.get("gracePeriodDays")) || 0,
       visibility: (formData.get("visibility") as string) || "private",
+      turnMode: (formData.get("turnMode") as string) || "random",
       rules: (formData.get("rules") as string) || undefined,
     };
 
@@ -51,6 +52,7 @@ export async function createCommittee(
       lateFee: data.lateFee,
       gracePeriodDays: data.gracePeriodDays,
       visibility: data.visibility as "private" | "public" | "invite-only",
+      turnMode: data.turnMode as "random" | "fixed",
       rules: data.rules,
       admin: session.user.id,
       totalRounds: data.maxMembers,
@@ -183,6 +185,35 @@ export async function getDashboardStats() {
     };
   } catch {
     return null;
+  }
+}
+
+export async function publishCommittee(id: string): Promise<ApiResponse> {
+  try {
+    const session = await auth();
+    if (!session?.user) return { success: false, error: "Unauthorized" };
+
+    await connectDB();
+
+    const committee = await Committee.findById(id);
+    if (!committee) return { success: false, error: "Committee not found" };
+    if (committee.admin.toString() !== session.user.id) {
+      return { success: false, error: "Only admin can publish" };
+    }
+    if (committee.status !== "draft") {
+      return { success: false, error: "Only draft committees can be published" };
+    }
+
+    committee.status = "active";
+    await committee.save();
+
+    revalidatePath(`/committees/${id}`);
+    revalidatePath("/committees");
+    revalidatePath("/dashboard");
+
+    return { success: true, message: "Committee published successfully" };
+  } catch {
+    return { success: false, error: "Failed to publish committee" };
   }
 }
 

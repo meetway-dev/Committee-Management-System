@@ -17,6 +17,7 @@ const committeeBaseSchema = z.object({
     lateFee: z.number().min(0).optional(),
     gracePeriodDays: z.number().int().min(0).optional(),
     visibility: z.enum(["private", "public", "invite-only"]).optional(),
+    turnMode: z.enum(["random", "fixed"]).optional(),
     rules: z.string().max(2000).optional(),
   });
 

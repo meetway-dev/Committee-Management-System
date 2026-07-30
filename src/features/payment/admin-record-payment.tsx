@@ -1,6 +1,6 @@
 "use client";
 
-import { submitPayment } from "@/actions/payment.actions";
+import { adminRecordPayment } from "@/actions/payment.actions";
 import { Button } from "@/components/ui/button";
 import {
     Card,
@@ -19,7 +19,6 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { formatCurrency } from "@/utils/format";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CreditCard, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -28,50 +27,37 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
-const paymentSchema = z.object({
+const recordSchema = z.object({
+  userId: z.string().min(1, "Member is required"),
   amount: z.number().min(1, "Amount must be greater than 0"),
-  paymentMethod: z.string().min(1, "Payment method is required"),
+  paymentMethod: z.string().optional(),
   notes: z.string().optional(),
 });
 
-type PaymentFormData = z.infer<typeof paymentSchema>;
+type RecordForm = z.infer<typeof recordSchema>;
 
-interface PaymentSubmitFormProps {
+interface AdminRecordPaymentProps {
   committeeId: string;
+  members: { _id: string; user?: { _id: string; name?: string; email?: string } }[];
   contributionAmount: number;
-  currency: string;
-  currentRound: number;
 }
 
-export function PaymentSubmitForm({
-  committeeId,
-  contributionAmount,
-  currency,
-  currentRound,
-}: PaymentSubmitFormProps) {
+export function AdminRecordPayment({ committeeId, members, contributionAmount }: AdminRecordPaymentProps) {
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
   const [proofPreview, setProofPreview] = useState<string | null>(null);
   const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    formState: { errors },
-  } = useForm<PaymentFormData>({
-    resolver: zodResolver(paymentSchema),
-    defaultValues: {
-      amount: contributionAmount,
-      paymentMethod: "",
-      notes: "",
-    },
+  const { register, handleSubmit, setValue, formState: { errors } } = useForm<RecordForm>({
+    resolver: zodResolver(recordSchema),
+    defaultValues: { amount: contributionAmount },
   });
 
-  async function onSubmit(data: PaymentFormData) {
+  async function onSubmit(data: RecordForm) {
     setSubmitting(true);
     try {
-      const result = await submitPayment(committeeId, {
+      const result = await adminRecordPayment(committeeId, {
+        userId: data.userId,
         amount: data.amount,
         paymentMethod: data.paymentMethod,
         notes: data.notes,
@@ -96,35 +82,40 @@ export function PaymentSubmitForm({
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-base">
           <CreditCard className="h-4 w-4" />
-          Submit Payment
+          Record Payment (Admin)
         </CardTitle>
         <CardDescription>
-          Round {currentRound} — {formatCurrency(contributionAmount, currency)}{" "}
-          due
+          Record a manual payment for a member
         </CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
+            <Label htmlFor="userId">Member</Label>
+            <Select onValueChange={(v: string | null) => { if (v) setValue("userId", v); }}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select member" />
+              </SelectTrigger>
+              <SelectContent>
+                {members.map((m) => (
+                  <SelectItem key={m._id} value={String(m.user?._id ?? m._id)}>
+                    {m.user?.name || m.user?.email || "Member"}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {errors.userId && <p className="text-xs text-destructive">{errors.userId.message}</p>}
+          </div>
+
+          <div className="space-y-2">
             <Label htmlFor="amount">Amount</Label>
-            <Input
-              id="amount"
-              type="number"
-              step="0.01"
-              {...register("amount", { valueAsNumber: true })}
-            />
-            {errors.amount && (
-              <p className="text-xs text-destructive">{errors.amount.message}</p>
-            )}
+            <Input id="amount" type="number" step="0.01" {...register("amount", { valueAsNumber: true })} />
+            {errors.amount && <p className="text-xs text-destructive">{errors.amount.message}</p>}
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="paymentMethod">Payment Method</Label>
-            <Select
-              onValueChange={(v: string | null) => {
-                if (v) setValue("paymentMethod", v);
-              }}
-            >
+            <Select onValueChange={(v: string | null) => { if (v) setValue("paymentMethod", v ?? ""); }}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select method" />
               </SelectTrigger>
@@ -136,22 +127,11 @@ export function PaymentSubmitForm({
                 <SelectItem value="online">Online Payment</SelectItem>
               </SelectContent>
             </Select>
-            {errors.paymentMethod && (
-              <p className="text-xs text-destructive">
-                {errors.paymentMethod.message}
-              </p>
-            )}
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="notes">Notes (optional)</Label>
-            <Textarea
-              id="notes"
-              placeholder="Any additional notes..."
-              {...register("notes")}
-              className="resize-none"
-              rows={3}
-            />
+            <Textarea id="notes" placeholder="Notes" {...register("notes")} rows={3} />
           </div>
 
           <div className="space-y-2">
@@ -180,14 +160,12 @@ export function PaymentSubmitForm({
               }}
             />
             <p className="text-xs text-muted-foreground">Image hosting migration coming soon — current uploads are saved locally for demo purposes.</p>
-            {proofPreview && (
-              <img src={proofPreview} alt="preview" className="mt-2 max-h-40 object-contain" />
-            )}
+            {proofPreview && <img src={proofPreview} alt="preview" className="mt-2 max-h-40 object-contain" />}
           </div>
 
           <Button type="submit" disabled={submitting} className="w-full gap-2">
             {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
-            Submit Payment
+            Record Payment
           </Button>
         </form>
       </CardContent>

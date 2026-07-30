@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document, Model } from "mongoose";
+import mongoose, { Document, Model, Schema } from "mongoose";
 
 export interface CommitteeDocument extends Document {
   name: string;
@@ -17,6 +17,7 @@ export interface CommitteeDocument extends Document {
   visibility: "private" | "public" | "invite-only";
   rules?: string;
   status: "draft" | "active" | "completed" | "archived";
+  turnMode: "random" | "fixed";
   currentRound: number;
   totalRounds: number;
   deletedAt?: Date | null;
@@ -42,6 +43,7 @@ const committeeSchema = new Schema<CommitteeDocument>(
     visibility: { type: String, enum: ["private", "public", "invite-only"], default: "private" },
     rules: { type: String },
     status: { type: String, enum: ["draft", "active", "completed", "archived"], default: "draft" },
+    turnMode: { type: String, enum: ["random", "fixed"], default: "random" },
     currentRound: { type: Number, default: 0 },
     totalRounds: { type: Number, default: 0 },
     deletedAt: { type: Date, default: null },

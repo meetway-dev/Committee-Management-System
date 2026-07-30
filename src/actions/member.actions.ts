@@ -1,14 +1,16 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { getBaseUrl } from "@/lib/app-url";
 import { auth } from "@/lib/auth";
 import { connectDB } from "@/lib/db";
+import { sendInvitationEmail } from "@/lib/email";
 import Committee from "@/models/Committee";
 import CommitteeMember from "@/models/CommitteeMember";
 import Invitation from "@/models/Invitation";
 import User from "@/models/User";
-import { randomBytes } from "crypto";
 import type { ApiResponse } from "@/types/api";
+import { randomBytes } from "crypto";
+import { revalidatePath } from "next/cache";
 
 export async function getCommitteeMembers(committeeId: string) {
   try {
@@ -31,10 +33,67 @@ export async function getCommitteeMembers(committeeId: string) {
   }
 }
 
+export async function setCommitteeTurnOrder(
+  committeeId: string,
+  memberIds: string[]
+): Promise<ApiResponse> {
+  try {
+    const session = await auth();
+    if (!session?.user) return { success: false, error: "Unauthorized" };
+
+    await connectDB();
+
+    const committee = await Committee.findById(committeeId);
+    if (!committee) return { success: false, error: "Committee not found" };
+    if (committee.status !== "draft") {
+      return { success: false, error: "Turn order can only be updated while committee is in draft" };
+    }
+
+    const membership = await CommitteeMember.findOne({
+      committee: committeeId,
+      user: session.user.id,
+      role: "admin",
+      status: "active",
+    });
+    if (!membership && session.user.role !== "superadmin") {
+      return { success: false, error: "Only admin can update turn order" };
+    }
+
+    const members = await CommitteeMember.find({
+      committee: committeeId,
+      status: "active",
+    });
+
+    if (members.length !== memberIds.length) {
+      return { success: false, error: "Member list mismatch" };
+    }
+
+    const memberSet = new Set(members.map((member) => member._id.toString()));
+    for (const id of memberIds) {
+      if (!memberSet.has(id)) {
+        return { success: false, error: "Invalid member order" };
+      }
+    }
+
+    await Promise.all(
+      memberIds.map((memberId, index) =>
+        CommitteeMember.findByIdAndUpdate(memberId, { turnNumber: index + 1 })
+      )
+    );
+
+    revalidatePath(`/committees/${committeeId}`);
+    revalidatePath("/committees");
+
+    return { success: true, message: "Turn order updated successfully" };
+  } catch {
+    return { success: false, error: "Failed to update turn order" };
+  }
+}
+
 export async function inviteMember(
   committeeId: string,
   email: string
-): Promise<ApiResponse<{ token: string }>> {
+): Promise<ApiResponse<{ token: string; link?: string; emailSent?: boolean }>> {
   try {
     const session = await auth();
     if (!session?.user) return { success: false, error: "Unauthorized" };
@@ -99,15 +158,103 @@ export async function inviteMember(
       expiresAt,
     });
 
+    const inviteUrl = await getBaseUrl(`/invite?token=${token}`);
+    const emailSent = await sendInvitationEmail(email, inviteUrl, committee.name || "Committee");
+
     revalidatePath(`/committees/${committeeId}`);
 
     return {
       success: true,
-      data: { token },
-      message: "Invitation sent successfully",
+      data: { token, link: inviteUrl, emailSent },
+      message: emailSent
+        ? "Invitation sent successfully"
+        : "Invitation created. Email delivery is not configured yet.",
     };
   } catch {
     return { success: false, error: "Failed to send invitation" };
+  }
+}
+
+export async function addCommitteeMember(
+  committeeId: string,
+  email: string
+): Promise<ApiResponse<{ memberId: string; userCreated: boolean }>> {
+  try {
+    const session = await auth();
+    if (!session?.user) return { success: false, error: "Unauthorized" };
+
+    await connectDB();
+
+    const committee = await Committee.findById(committeeId);
+    if (!committee) return { success: false, error: "Committee not found" };
+
+    const membership = await CommitteeMember.findOne({
+      committee: committeeId,
+      user: session.user.id,
+      role: "admin",
+      status: "active",
+    });
+
+    if (!membership && session.user.role !== "superadmin") {
+      return { success: false, error: "Only admin can add members" };
+    }
+
+    const memberCount = await CommitteeMember.countDocuments({
+      committee: committeeId,
+      status: "active",
+    });
+
+    if (memberCount >= committee.maxMembers) {
+      return { success: false, error: "Committee is full" };
+    }
+
+    const normalizedEmail = email.trim().toLowerCase();
+    let user = await User.findOne({ email: normalizedEmail });
+    let userCreated = false;
+
+    if (!user) {
+      const displayName = normalizedEmail.split("@")[0];
+      user = await User.create({
+        email: normalizedEmail,
+        name: displayName,
+        provider: "credentials",
+        status: "active",
+      });
+      userCreated = true;
+    } else if (user.status !== "active") {
+      return { success: false, error: "User account is not active" };
+    }
+
+    const existingMember = await CommitteeMember.findOne({
+      committee: committeeId,
+      user: user._id,
+      status: "active",
+    });
+
+    if (existingMember) {
+      return { success: false, error: "User is already a member" };
+    }
+
+    const committeeMember = await CommitteeMember.create({
+      committee: committeeId,
+      user: user._id,
+      role: "member",
+      turnNumber: memberCount + 1,
+      status: "active",
+    });
+
+    revalidatePath(`/committees/${committeeId}`);
+    revalidatePath("/dashboard");
+
+    return {
+      success: true,
+      data: { memberId: committeeMember._id.toString(), userCreated },
+      message: userCreated
+        ? "Member added and account created successfully."
+        : "Member added successfully.",
+    };
+  } catch {
+    return { success: false, error: "Failed to add member" };
   }
 }
 

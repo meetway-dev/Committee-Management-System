@@ -18,6 +18,7 @@ export interface ICommittee {
   lateFee: number;
   gracePeriodDays: number;
   visibility: CommitteeVisibility;
+  turnMode: "random" | "fixed";
   rules?: string;
   status: CommitteeStatus;
   currentRound: number;

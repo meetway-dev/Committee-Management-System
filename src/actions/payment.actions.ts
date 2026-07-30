@@ -1,13 +1,15 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { connectDB } from "@/lib/db";
-import mongoose from "mongoose";
 import Committee from "@/models/Committee";
 import CommitteeMember from "@/models/CommitteeMember";
 import Payment from "@/models/Payment";
 import type { ApiResponse } from "@/types/api";
+import fs from "fs/promises";
+import mongoose from "mongoose";
+import { revalidatePath } from "next/cache";
+import path from "path";
 
 export async function submitPayment(
   committeeId: string,
@@ -55,6 +57,21 @@ export async function submitPayment(
       };
     }
 
+    // validate proof image if provided (max 5MB, must be image/*)
+    let pendingProof: { mime: string; b64: string; ext: string } | null = null;
+    if (data.proofImage && typeof data.proofImage === "string" && data.proofImage.startsWith("data:")) {
+      const matches = data.proofImage.match(/^data:(.+);base64,(.+)$/);
+      if (!matches) return { success: false, error: "Invalid proof image data" };
+      const mime = matches[1];
+      const b64 = matches[2];
+      if (!mime.startsWith("image/")) return { success: false, error: "Proof must be an image" };
+      const size = Buffer.byteLength(b64, "base64");
+      const MAX = 5 * 1024 * 1024;
+      if (size > MAX) return { success: false, error: "Proof image too large (max 5MB)" };
+      const ext = mime.split("/").pop() || "png";
+      pendingProof = { mime, b64, ext };
+    }
+
     const payment = await Payment.create({
       committee: committeeId,
       member: membership._id,
@@ -64,9 +81,28 @@ export async function submitPayment(
       dueDate: new Date(),
       status: "pending",
       paymentMethod: data.paymentMethod,
-      proofImage: data.proofImage,
+      proofImage: undefined,
       notes: data.notes,
     });
+
+    // If we validated a pendingProof above, write file now
+    if (pendingProof) {
+      try {
+        const uploadsDir = path.join(process.cwd(), "public", "uploads", "payments");
+        await fs.mkdir(uploadsDir, { recursive: true });
+        const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${pendingProof.ext}`;
+        const filePath = path.join(uploadsDir, fileName);
+        await fs.writeFile(filePath, Buffer.from(pendingProof.b64, "base64"));
+        payment.proofImage = `/uploads/payments/${fileName}`;
+        await payment.save();
+      } catch {
+        // ignore file save errors but keep payment record
+      }
+    } else if (data.proofImage && typeof data.proofImage === "string") {
+      // If caller passed a path already, store it directly
+      payment.proofImage = data.proofImage;
+      await payment.save();
+    }
 
     revalidatePath(`/committees/${committeeId}`);
     revalidatePath("/payments");
@@ -200,5 +236,100 @@ export async function getCommitteePayments(committeeId: string) {
     return JSON.parse(JSON.stringify(payments));
   } catch {
     return [];
+  }
+}
+
+export async function adminRecordPayment(
+  committeeId: string,
+  data: {
+    userId: string;
+    amount: number;
+    paymentMethod?: string;
+    proofImage?: string;
+    notes?: string;
+  }
+): Promise<ApiResponse<{ id: string }>> {
+  try {
+    const session = await auth();
+    if (!session?.user) return { success: false, error: "Unauthorized" };
+
+    await connectDB();
+
+    const committee = await Committee.findById(committeeId);
+    if (!committee) return { success: false, error: "Committee not found" };
+
+    const adminMembership = await CommitteeMember.findOne({
+      committee: committeeId,
+      user: session.user.id,
+      role: "admin",
+      status: "active",
+    });
+
+    if (!adminMembership && session.user.role !== "superadmin") {
+      return { success: false, error: "Only admin can record payments" };
+    }
+
+    const targetMember = await CommitteeMember.findOne({
+      committee: committeeId,
+      user: data.userId,
+    });
+
+    if (!targetMember) return { success: false, error: "Member not found" };
+
+    const payment = await Payment.create({
+      committee: committeeId,
+      member: targetMember._id,
+      user: data.userId,
+      round: committee.currentRound,
+      amount: data.amount,
+      dueDate: new Date(),
+      paidDate: new Date(),
+      status: "approved",
+      paymentMethod: data.paymentMethod,
+      notes: data.notes,
+      approvedBy: session.user.id,
+      approvedAt: new Date(),
+    });
+
+    // validate and handle proof image if provided (max 5MB, must be image/*)
+    if (data.proofImage && typeof data.proofImage === "string") {
+      if (data.proofImage.startsWith("data:")) {
+        const matches = data.proofImage.match(/^data:(.+);base64,(.+)$/);
+        if (matches) {
+          const mime = matches[1];
+          const b64 = matches[2];
+          if (!mime.startsWith("image/")) return { success: false, error: "Proof must be an image" };
+          const size = Buffer.byteLength(b64, "base64");
+          const MAX = 5 * 1024 * 1024;
+          if (size > MAX) return { success: false, error: "Proof image too large (max 5MB)" };
+          const ext = mime.split("/").pop() || "png";
+          try {
+            const uploadsDir = path.join(process.cwd(), "public", "uploads", "payments");
+            await fs.mkdir(uploadsDir, { recursive: true });
+            const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+            const filePath = path.join(uploadsDir, fileName);
+            await fs.writeFile(filePath, Buffer.from(b64, "base64"));
+            payment.proofImage = `/uploads/payments/${fileName}`;
+            await payment.save();
+          } catch {
+            // ignore file save errors but keep payment record
+          }
+        }
+      } else {
+        payment.proofImage = data.proofImage;
+        await payment.save();
+      }
+    }
+
+    // update member total
+    targetMember.totalPaid = (targetMember.totalPaid || 0) + data.amount;
+    await targetMember.save();
+
+    revalidatePath(`/committees/${committeeId}`);
+    revalidatePath(`/payments`);
+
+    return { success: true, data: { id: payment._id.toString() }, message: "Payment recorded" };
+  } catch {
+    return { success: false, error: "Failed to record payment" };
   }
 }

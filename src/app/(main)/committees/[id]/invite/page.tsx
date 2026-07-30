@@ -1,6 +1,6 @@
 "use client";
 
-import { inviteMember } from "@/actions/member.actions";
+import { addCommitteeMember, inviteMember } from "@/actions/member.actions";
 import { PageHeader } from "@/components/shared/page-header";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
@@ -29,6 +29,7 @@ export default function InviteMemberPage({ params }: PageProps) {
   const { id } = use(params);
   const [loading, setLoading] = useState(false);
   const [inviteLink, setInviteLink] = useState<string | null>(null);
+  const [emailSent, setEmailSent] = useState<boolean | null>(null);
   const [copied, setCopied] = useState(false);
 
   const {
@@ -44,14 +45,41 @@ export default function InviteMemberPage({ params }: PageProps) {
     },
   });
 
-  async function onSubmit(data: InviteMemberInput) {
+  async function handleInvite(data: InviteMemberInput) {
     if (!data.email) return;
     setLoading(true);
+    setInviteLink(null);
+    setEmailSent(null);
+
     try {
       const result = await inviteMember(id, data.email);
       if (result.success && result.data) {
-        const link = `${window.location.origin}/invite?token=${result.data.token}`;
+        const link =
+          result.data.link ||
+          `${window.location.origin}/invite?token=${result.data.token}`;
         setInviteLink(link);
+        setEmailSent(result.data.emailSent ?? null);
+        toast.success(result.message);
+        reset();
+      } else {
+        toast.error(result.error);
+      }
+    } catch {
+      toast.error("Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleAddMember(data: InviteMemberInput) {
+    if (!data.email) return;
+    setLoading(true);
+    setInviteLink(null);
+    setEmailSent(null);
+
+    try {
+      const result = await addCommitteeMember(id, data.email);
+      if (result.success) {
         toast.success(result.message);
         reset();
       } else {
@@ -97,16 +125,19 @@ export default function InviteMemberPage({ params }: PageProps) {
       />
 
       <div className="mx-auto max-w-lg space-y-6">
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">Invite by Email</CardTitle>
-              <CardDescription>
-                Enter the email address of the person you want to invite
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Invite or add a member</CardTitle>
+            <CardDescription>
+              Use the email below to either send an invitation link or add an existing user directly.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="rounded-2xl border border-muted/20 bg-muted/5 p-4">
+              <p className="text-sm font-medium text-muted-foreground">
+                Enter the member's email and choose an action. If the user has an account, use "Add Member"; otherwise use "Send Invite".
+              </p>
+              <div className="mt-4 space-y-4">
                 <Label htmlFor="email">Email Address</Label>
                 <Input
                   id="email"
@@ -119,16 +150,35 @@ export default function InviteMemberPage({ params }: PageProps) {
                     {errors.email.message}
                   </p>
                 )}
+                <div className="grid gap-2 sm:grid-cols-2">
+                  <Button
+                    type="button"
+                    onClick={handleSubmit(handleInvite)}
+                    disabled={loading}
+                    className="w-full"
+                  >
+                    {loading && (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    )}
+                    Send Invite
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    onClick={handleSubmit(handleAddMember)}
+                    disabled={loading}
+                    className="w-full"
+                  >
+                    {loading && (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    )}
+                    Add Member
+                  </Button>
+                </div>
               </div>
-              <Button type="submit" disabled={loading} className="w-full">
-                {loading && (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                )}
-                Send Invitation
-              </Button>
-            </CardContent>
-          </Card>
-        </form>
+            </div>
+          </CardContent>
+        </Card>
 
         {inviteLink && (
           <Card>
@@ -141,7 +191,7 @@ export default function InviteMemberPage({ params }: PageProps) {
                 Share this link with the member to join
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-3">
               <div className="flex items-center gap-2">
                 <Input value={inviteLink} readOnly className="text-xs" />
                 <Button
@@ -157,6 +207,11 @@ export default function InviteMemberPage({ params }: PageProps) {
                   )}
                 </Button>
               </div>
+              {emailSent === false && (
+                <p className="text-sm text-muted-foreground">
+                  Email delivery is not configured. Copy the link and send it manually.
+                </p>
+              )}
             </CardContent>
           </Card>
         )}

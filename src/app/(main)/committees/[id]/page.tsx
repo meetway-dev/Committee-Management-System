@@ -1,50 +1,53 @@
-import { notFound } from "next/navigation";
-import Link from "next/link";
-import { cn } from "@/lib/utils";
-import { buttonVariants } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { Separator } from "@/components/ui/separator";
-import { PageHeader } from "@/components/shared/page-header";
-import { StatusBadge } from "@/components/shared/status-badge";
-import { EmptyState } from "@/components/shared/empty-state";
 import { getCommitteeById } from "@/actions/committee.actions";
 import { getCommitteeMembers } from "@/actions/member.actions";
 import { getCommitteePayments } from "@/actions/payment.actions";
-import { PaymentSubmitForm } from "@/features/payment/payment-submit-form";
-import { PaymentActions } from "@/features/payment/payment-actions";
+import { EmptyState } from "@/components/shared/empty-state";
+import { PageHeader } from "@/components/shared/page-header";
+import { StatusBadge } from "@/components/shared/status-badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { buttonVariants } from "@/components/ui/button";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Separator } from "@/components/ui/separator";
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { DraftTurnOrderManager } from "@/features/committee/draft-turn-order-manager";
+import { PublishCommitteeButton } from "@/features/committee/publish-committee-button";
 import { MemberRemoveButton } from "@/features/member/member-remove-button";
+import { AdminRecordPayment } from "@/features/payment/admin-record-payment";
+import { PaymentActions } from "@/features/payment/payment-actions";
+import { PaymentSubmitForm } from "@/features/payment/payment-submit-form";
+import { cn } from "@/lib/utils";
 import { formatCurrency, formatDate, getInitials } from "@/utils/format";
 import {
-  Users,
-  ArrowLeft,
-  Calendar,
-  Wallet,
-  Clock,
-  UserPlus,
-  CreditCard,
-  Shield,
-  Settings,
-  TrendingUp,
-  Crown,
+    ArrowLeft,
+    Calendar,
+    Clock,
+    CreditCard,
+    Crown,
+    Settings,
+    Shield,
+    TrendingUp,
+    UserPlus,
+    Users,
+    Wallet,
 } from "lucide-react";
+import Link from "next/link";
+import { notFound } from "next/navigation";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -166,6 +169,26 @@ export default async function CommitteeDetailPage({ params }: PageProps) {
         </Card>
       </div>
 
+      {committee.status === "draft" && committee.userRole === "admin" && (
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="text-sm font-medium">Draft committee</p>
+                <p className="text-xs text-muted-foreground">
+                  This committee is a draft and must be published before members can contribute.
+                </p>
+              </div>
+              <PublishCommitteeButton committeeId={id} />
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {committee.status === "draft" && committee.turnMode === "fixed" && committee.userRole === "admin" && (
+        <DraftTurnOrderManager committeeId={id} members={members} />
+      )}
+
       {committee.status === "active" && (
         <Card>
           <CardContent className="p-4">
@@ -228,6 +251,13 @@ export default async function CommitteeDetailPage({ params }: PageProps) {
                 <span className="text-sm text-muted-foreground">Visibility</span>
                 <span className="text-sm font-medium capitalize">
                   {committee.visibility}
+                </span>
+              </div>
+              <Separator />
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">Turn Order</span>
+                <span className="text-sm font-medium capitalize">
+                  {committee.turnMode || "random"}
                 </span>
               </div>
               <Separator />
@@ -317,7 +347,7 @@ export default async function CommitteeDetailPage({ params }: PageProps) {
                     className={cn(buttonVariants({ size: "sm" }), "gap-1.5")}
                   >
                     <UserPlus className="h-4 w-4" />
-                    Invite
+                    Invite / Add Member
                   </Link>
                 )}
               </div>
@@ -413,6 +443,13 @@ export default async function CommitteeDetailPage({ params }: PageProps) {
               currentRound={committee.currentRound}
             />
           )}
+          {committee.userRole === "admin" && (
+            <AdminRecordPayment
+              committeeId={id}
+              members={members}
+              contributionAmount={committee.contributionAmount}
+            />
+          )}
           <Card>
             <CardHeader>
               <CardTitle className="text-base">Payments</CardTitle>
@@ -435,6 +472,7 @@ export default async function CommitteeDetailPage({ params }: PageProps) {
                         <TableHead>Method</TableHead>
                         <TableHead>Status</TableHead>
                         <TableHead>Date</TableHead>
+                        <TableHead>Proof</TableHead>
                         {committee.userRole === "admin" && (
                           <TableHead className="w-[80px]">Actions</TableHead>
                         )}
@@ -450,6 +488,7 @@ export default async function CommitteeDetailPage({ params }: PageProps) {
                           paymentMethod?: string;
                           status: string;
                           createdAt: string;
+                          proofImage?: string;
                         }) => (
                           <TableRow key={payment._id}>
                             <TableCell>
@@ -482,6 +521,15 @@ export default async function CommitteeDetailPage({ params }: PageProps) {
                             </TableCell>
                             <TableCell className="text-muted-foreground">
                               {formatDate(payment.createdAt)}
+                            </TableCell>
+                            <TableCell>
+                              {payment.proofImage ? (
+                                <a href={payment.proofImage} target="_blank" rel="noreferrer">
+                                  <img src={payment.proofImage} className="h-8 w-12 object-cover rounded" alt="proof" />
+                                </a>
+                              ) : (
+                                "—"
+                              )}
                             </TableCell>
                             {committee.userRole === "admin" && (
                               <TableCell>
