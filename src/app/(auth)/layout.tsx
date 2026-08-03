@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { Sparkles } from "lucide-react";
+import Link from "next/link";
 
 export default function AuthLayout({
   children,
@@ -16,7 +16,7 @@ export default function AuthLayout({
           <Sparkles className="h-4.5 w-4.5 text-white" />
         </div>
         <span className="text-2xl font-extrabold tracking-tight font-heading">
-          Committies
+          BachatZone
         </span>
       </Link>
       <div className="w-full max-w-md">{children}</div>

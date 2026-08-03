@@ -251,11 +251,6 @@ export default async function CommitteeDetailPage({ params }: PageProps) {
                 {committee.paymentDueDay}
                 {ordinal(committee.paymentDueDay)} of each period
               </SpecRow>
-              {committee.lateFee > 0 && (
-                <SpecRow label="Late fee">
-                  {formatCurrency(committee.lateFee, committee.currency)}
-                </SpecRow>
-              )}
               {committee.gracePeriodDays > 0 && (
                 <SpecRow label="Grace period">
                   {committee.gracePeriodDays} days

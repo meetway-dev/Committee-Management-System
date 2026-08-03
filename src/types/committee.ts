@@ -15,7 +15,6 @@ export interface ICommittee {
   minMembers: number;
   startDate?: Date;
   paymentDueDay: number;
-  lateFee: number;
   gracePeriodDays: number;
   visibility: CommitteeVisibility;
   turnMode: "random" | "fixed";

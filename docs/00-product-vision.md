@@ -1,8 +1,8 @@
-# Committee Management System (CMS)
+# BachatZone (CMS)
 
 ## Product Vision
 
-Committee Management System (CMS) is a modern Progressive Web Application (PWA) that digitizes traditional committee savings (ROSCA/Chit Fund) management.
+BachatZone is a modern Progressive Web Application (PWA) that digitizes traditional committee savings (ROSCA/Chit Fund) management.
 
 The application replaces manual tracking using WhatsApp groups, Excel sheets, notebooks, and paper records with a secure, transparent, and user-friendly platform.
 

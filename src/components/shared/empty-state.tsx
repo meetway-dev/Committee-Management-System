@@ -1,7 +1,7 @@
-import Link from "next/link";
-import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { type LucideIcon } from "lucide-react";
+import Link from "next/link";
 
 interface EmptyStateProps {
   icon: LucideIcon;

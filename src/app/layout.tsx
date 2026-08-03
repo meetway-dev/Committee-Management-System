@@ -23,11 +23,11 @@ const plusJakarta = Plus_Jakarta_Sans({
 
 export const metadata: Metadata = {
   title: {
-    default: "Committies - Committee Management System",
-    template: "%s | Committies",
+    default: "BachatZone - Committee Management System",
+    template: "%s | BachatZone",
   },
   description:
-    "Modern committee savings management platform. Create, manage, and track your ROSCA/Chit Fund committees with ease.",
+    "BachatZone is a modern committee savings management platform. Create, manage, and track your ROSCA/Chit Fund committees with ease.",
   manifest: "/manifest.json",
   icons: {
     icon: "/favicon.ico",

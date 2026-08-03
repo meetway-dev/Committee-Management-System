@@ -12,7 +12,6 @@ export interface CommitteeDocument extends Document {
   minMembers: number;
   startDate?: Date;
   paymentDueDay: number;
-  lateFee: number;
   gracePeriodDays: number;
   visibility: "private" | "public" | "invite-only";
   rules?: string;
@@ -38,7 +37,6 @@ const committeeSchema = new Schema<CommitteeDocument>(
     minMembers: { type: Number, required: true, min: 2 },
     startDate: { type: Date },
     paymentDueDay: { type: Number, min: 1, max: 28, default: 1 },
-    lateFee: { type: Number, default: 0, min: 0 },
     gracePeriodDays: { type: Number, default: 0, min: 0 },
     visibility: { type: String, enum: ["private", "public", "invite-only"], default: "private" },
     rules: { type: String },

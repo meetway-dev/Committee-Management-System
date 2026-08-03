@@ -41,7 +41,7 @@ export default function LandingPage() {
               <Sparkles className="h-4 w-4 text-white" />
             </div>
             <span className="text-lg font-bold tracking-tight font-heading">
-              Committies
+              BachatZone
             </span>
           </Link>
 
@@ -224,9 +224,9 @@ export default function LandingPage() {
             <div className="mesh-brand flex h-7 w-7 items-center justify-center rounded-xl">
               <Sparkles className="h-3.5 w-3.5 text-white" />
             </div>
-            <span className="font-semibold text-foreground">Committies</span>
+            <span className="font-semibold text-foreground">BachatZone</span>
           </div>
-          <p>© {new Date().getFullYear()} Committies</p>
+          <p>© {new Date().getFullYear()} BachatZone</p>
         </div>
       </footer>
     </div>

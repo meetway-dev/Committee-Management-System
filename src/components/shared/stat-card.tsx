@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { type LucideIcon, TrendingUp, TrendingDown } from "lucide-react";
+import { type LucideIcon, TrendingDown, TrendingUp } from "lucide-react";
 
 const toneMap = {
   primary: "bg-primary-soft text-primary",

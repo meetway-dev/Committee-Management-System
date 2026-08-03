@@ -2,7 +2,7 @@
 
 Version: 1.0
 
-This document defines the visual identity of the Committee Management System.
+This document defines the visual identity of BachatZone.
 
 Every page, component and feature must follow this design system.
 

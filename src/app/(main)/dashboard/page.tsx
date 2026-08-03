@@ -11,11 +11,11 @@ import { CommitteeCardList } from "@/features/committee/committee-card";
 import { cn } from "@/lib/utils";
 import { formatCurrency, formatRelativeDate } from "@/utils/format";
 import {
-  Clock,
-  Layers,
-  Plus,
-  Users,
-  Wallet
+    Clock,
+    Layers,
+    Plus,
+    Users,
+    Wallet
 } from "lucide-react";
 import Link from "next/link";
 

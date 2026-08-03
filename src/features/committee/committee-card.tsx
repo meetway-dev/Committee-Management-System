@@ -1,10 +1,10 @@
-import Link from "next/link";
-import { StatusBadge } from "@/components/shared/status-badge";
 import { GradientAvatar } from "@/components/shared/gradient-avatar";
+import { StatusBadge } from "@/components/shared/status-badge";
 import { Progress } from "@/components/ui/progress";
 import type { ICommittee } from "@/types/committee";
 import { formatCurrency } from "@/utils/format";
-import { Users, ChevronRight } from "lucide-react";
+import { ChevronRight, Users } from "lucide-react";
+import Link from "next/link";
 
 interface PopulatedCommittee extends Omit<ICommittee, "admin"> {
   admin?: string | { name?: string; image?: string };

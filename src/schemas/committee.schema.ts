@@ -14,7 +14,6 @@ const committeeBaseSchema = z.object({
     minMembers: z.number().int().min(2, "Minimum 2 members required"),
     startDate: z.string().optional(),
     paymentDueDay: z.number().int().min(1).max(28).optional(),
-    lateFee: z.number().min(0).optional(),
     gracePeriodDays: z.number().int().min(0).optional(),
     visibility: z.enum(["private", "public", "invite-only"]).optional(),
     turnMode: z.enum(["random", "fixed"]).optional(),

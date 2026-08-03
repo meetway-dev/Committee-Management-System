@@ -1,8 +1,8 @@
-# Committee Management System
+# BachatZone
 
 ## Project Name
 
-Committee Management System
+BachatZone
 
 ## Project Type
 

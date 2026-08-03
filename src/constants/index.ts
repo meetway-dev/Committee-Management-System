@@ -1,5 +1,5 @@
-export const APP_NAME = "Committies";
-export const APP_DESCRIPTION = "Modern Committee Management System";
+export const APP_NAME = "BachatZone";
+export const APP_DESCRIPTION = "Modern committee savings management platform";
 
 export const COMMITTEE_FREQUENCIES = [
   { value: "daily", label: "Daily" },

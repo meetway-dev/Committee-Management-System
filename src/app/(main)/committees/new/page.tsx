@@ -57,7 +57,6 @@ export default function CreateCommitteePage() {
       maxMembers: 10,
       minMembers: 2,
       paymentDueDay: 1,
-      lateFee: 0,
       gracePeriodDays: 3,
     },
   });
@@ -92,7 +91,7 @@ export default function CreateCommitteePage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-5xl px-4 sm:px-6 mx-auto">
       <PageHeader
         title="Create Committee"
         description="Set up a new savings committee"
@@ -119,7 +118,7 @@ export default function CreateCommitteePage() {
               Give your committee a name and description
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-3">
             <div className="space-y-2">
               <Label htmlFor="name">Committee Name *</Label>
               <Input
@@ -157,8 +156,8 @@ export default function CreateCommitteePage() {
               Set contribution amount and frequency
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid gap-4 sm:grid-cols-2">
+          <CardContent className="space-y-3">
+            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
               <div className="space-y-2">
                 <Label htmlFor="contributionAmount">
                   Contribution Amount *
@@ -181,7 +180,7 @@ export default function CreateCommitteePage() {
                   value={currencyVal}
                   onValueChange={(v) => { if (v) { setCurrencyVal(v); setValue("currency", v); } }}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -193,8 +192,6 @@ export default function CreateCommitteePage() {
                   </SelectContent>
                 </Select>
               </div>
-            </div>
-            <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="frequency">Frequency *</Label>
                 <Select
@@ -203,7 +200,7 @@ export default function CreateCommitteePage() {
                     if (v) { setFrequencyVal(v); setValue("frequency", v as "daily" | "weekly" | "monthly"); }
                   }}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -223,7 +220,7 @@ export default function CreateCommitteePage() {
                     if (v) { setTurnModeVal(v); setValue("turnMode", v as "random" | "fixed"); }
                   }}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -237,130 +234,123 @@ export default function CreateCommitteePage() {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="lateFee">Late Fee</Label>
-              <Input
-                id="lateFee"
-                type="number"
-                placeholder="0"
-                {...register("lateFee", { valueAsNumber: true })}
-              />
-            </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Members & Schedule</CardTitle>
-            <CardDescription>
-              Configure member limits and payment schedule
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="minMembers">Min Members *</Label>
-                <Input
-                  id="minMembers"
-                  type="number"
-                  {...register("minMembers", { valueAsNumber: true })}
-                />
-                {errors.minMembers && (
-                  <p className="text-xs text-destructive">
-                    {errors.minMembers.message}
-                  </p>
-                )}
+        <div className="space-y-4">
+          <Card className="border-border bg-card/80">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-base">Members & Schedule</CardTitle>
+              <CardDescription className="text-sm">
+                Set the membership limits and payment timing for the committee.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                <div className="space-y-2">
+                  <Label htmlFor="minMembers">Min Members *</Label>
+                  <Input
+                    id="minMembers"
+                    type="number"
+                    {...register("minMembers", { valueAsNumber: true })}
+                  />
+                  {errors.minMembers && (
+                    <p className="text-xs text-destructive">
+                      {errors.minMembers.message}
+                    </p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="maxMembers">Max Members *</Label>
+                  <Input
+                    id="maxMembers"
+                    type="number"
+                    {...register("maxMembers", { valueAsNumber: true })}
+                  />
+                  {errors.maxMembers && (
+                    <p className="text-xs text-destructive">
+                      {errors.maxMembers.message}
+                    </p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="paymentDueDay">Payment Due Day</Label>
+                  <Input
+                    id="paymentDueDay"
+                    type="number"
+                    min={1}
+                    max={28}
+                    {...register("paymentDueDay", { valueAsNumber: true })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="gracePeriodDays">Grace Period (Days)</Label>
+                  <Input
+                    id="gracePeriodDays"
+                    type="number"
+                    min={0}
+                    {...register("gracePeriodDays", { valueAsNumber: true })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="startDate">Start Date</Label>
+                  <Input id="startDate" type="date" {...register("startDate")} />
+                </div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="maxMembers">Max Members *</Label>
-                <Input
-                  id="maxMembers"
-                  type="number"
-                  {...register("maxMembers", { valueAsNumber: true })}
-                />
-                {errors.maxMembers && (
-                  <p className="text-xs text-destructive">
-                    {errors.maxMembers.message}
-                  </p>
-                )}
-              </div>
-            </div>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="paymentDueDay">Payment Due Day</Label>
-                <Input
-                  id="paymentDueDay"
-                  type="number"
-                  min={1}
-                  max={28}
-                  {...register("paymentDueDay", { valueAsNumber: true })}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="gracePeriodDays">Grace Period (Days)</Label>
-                <Input
-                  id="gracePeriodDays"
-                  type="number"
-                  min={0}
-                  {...register("gracePeriodDays", { valueAsNumber: true })}
-                />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="startDate">Start Date</Label>
-              <Input id="startDate" type="date" {...register("startDate")} />
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Settings</CardTitle>
-            <CardDescription>
-              Visibility and rules for the committee
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="visibility">Visibility</Label>
-              <Select
-                value={visibilityVal}
-                onValueChange={(v) => {
-                  if (v) { setVisibilityVal(v); setValue("visibility", v as "private" | "public" | "invite-only"); }
-                }}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {COMMITTEE_VISIBILITIES.map((vis) => (
-                    <SelectItem key={vis.value} value={vis.value}>
-                      {vis.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="rules">Rules</Label>
-              <Textarea
-                id="rules"
-                placeholder="Committee rules and guidelines..."
-                rows={4}
-                {...register("rules")}
-              />
-            </div>
-          </CardContent>
-        </Card>
+          <Card className="border-border bg-card/80">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-base">Settings</CardTitle>
+              <CardDescription className="text-sm">
+                Configure visibility and add the committee rules.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="visibility">Visibility</Label>
+                  <Select
+                    value={visibilityVal}
+                    onValueChange={(v) => {
+                      if (v) { setVisibilityVal(v); setValue("visibility", v as "private" | "public" | "invite-only"); }
+                    }}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {COMMITTEE_VISIBILITIES.map((vis) => (
+                        <SelectItem key={vis.value} value={vis.value}>
+                          {vis.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2 sm:col-span-2">
+                  <Label htmlFor="rules">Rules</Label>
+                  <Textarea
+                    id="rules"
+                    placeholder="Committee rules and guidelines..."
+                    rows={4}
+                    {...register("rules")}
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
-        <div className="flex items-center justify-end gap-3">
+        <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
           <Link
             href="/committees"
-            className={cn(buttonVariants({ variant: "outline" }))}
+            className={cn(buttonVariants({ variant: "outline" }), "w-full sm:w-auto")}
           >
             Cancel
           </Link>
-          <Button type="submit" disabled={loading}>
+          <Button type="submit" disabled={loading} className="w-full sm:w-auto">
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Create Committee
           </Button>

@@ -51,10 +51,10 @@ function NavLink({
       href={href}
       aria-current={active ? "page" : undefined}
       className={cn(
-        "flex items-center gap-3 rounded-xl px-3 py-2.5 text-[0.8rem] font-semibold transition-colors duration-150",
+        "flex items-center gap-3 rounded-lg px-3 py-2.5 text-[0.8rem] font-semibold transition-all duration-150",
         active
-          ? "bg-primary-soft text-primary"
-          : "text-sidebar-foreground/65 hover:bg-sidebar-accent hover:text-sidebar-foreground"
+          ? "bg-primary/10 text-primary shadow-sm ring-1 ring-primary/10"
+          : "text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-foreground"
       )}
     >
       {Icon && <Icon className="h-4 w-4 shrink-0" />}
@@ -72,7 +72,7 @@ export function Sidebar() {
     pathname === href || pathname.startsWith(href + "/");
 
   return (
-    <aside className="fixed left-0 top-14 hidden h-[calc(100vh-3.5rem)] w-56 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground lg:flex">
+    <aside className="fixed left-0 top-14 hidden h-[calc(100vh-3.5rem)] w-56 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground shadow-[inset_-1px_0_0_rgba(15,23,42,0.04)] lg:flex">
       <nav className="flex-1 space-y-0.5 overflow-y-auto p-3">
         {NAV_ITEMS.sidebar.map((item) => (
           <NavLink
@@ -87,7 +87,7 @@ export function Sidebar() {
         {user?.role === "superadmin" && (
           <>
             <div className="my-2 h-px bg-sidebar-border" />
-            <p className="px-3 pb-1 text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
+            <p className="px-3 pb-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-sidebar-foreground/55">
               Admin
             </p>
             {NAV_ITEMS.admin.map((item) => (
@@ -107,7 +107,7 @@ export function Sidebar() {
         <div className="border-t border-sidebar-border p-3">
           <Link
             href="/profile"
-            className="flex items-center gap-2.5 rounded-xl p-2 transition-colors hover:bg-sidebar-accent"
+            className="flex items-center gap-2.5 rounded-lg border border-transparent p-2.5 transition-colors hover:border-sidebar-border hover:bg-sidebar-accent/80"
           >
             <GradientAvatar
               name={user.name || "User"}

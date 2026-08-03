@@ -1,13 +1,13 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { PageHeader } from "@/components/shared/page-header";
-import { StatusBadge } from "@/components/shared/status-badge";
-import { EmptyState } from "@/components/shared/empty-state";
-import { ListRow, ListGroup } from "@/components/shared/list-row";
-import { GradientAvatar } from "@/components/shared/gradient-avatar";
-import { StatPill } from "@/components/shared/stat-pill";
 import { getMyPayments } from "@/actions/payment.actions";
+import { EmptyState } from "@/components/shared/empty-state";
+import { GradientAvatar } from "@/components/shared/gradient-avatar";
+import { ListGroup, ListRow } from "@/components/shared/list-row";
+import { PageHeader } from "@/components/shared/page-header";
+import { StatPill } from "@/components/shared/stat-pill";
+import { StatusBadge } from "@/components/shared/status-badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { formatCurrency, formatDate } from "@/utils/format";
-import { CreditCard, CheckCircle2, Clock, XCircle } from "lucide-react";
+import { CheckCircle2, Clock, CreditCard, XCircle } from "lucide-react";
 
 interface PaymentView {
   _id: string;

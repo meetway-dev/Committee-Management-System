@@ -1,7 +1,7 @@
 {
-  "name": "Committies",
-  "short_name": "Committies",
-  "description": "Modern Committee Management System - Manage your savings committees",
+  "name": "BachatZone",
+  "short_name": "BachatZone",
+  "description": "BachatZone - Manage your savings committees",
   "start_url": "/dashboard",
   "display": "standalone",
   "background_color": "#ffffff",

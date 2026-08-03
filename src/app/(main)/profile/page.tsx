@@ -1,5 +1,9 @@
 "use client";
 
+import { changePassword, getProfile, updateProfile } from "@/actions/profile.actions";
+import { GradientAvatar } from "@/components/shared/gradient-avatar";
+import { PageHeader } from "@/components/shared/page-header";
+import { SectionHeader } from "@/components/shared/section-header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,15 +15,6 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
-import { changePassword, getProfile, updateProfile } from "@/actions/profile.actions";
-import { GradientAvatar } from "@/components/shared/gradient-avatar";
-import { PageHeader } from "@/components/shared/page-header";
-import { SectionHeader } from "@/components/shared/section-header";
 import { COUNTRIES } from "@/constants";
 import {
     changePasswordSchema,
@@ -27,7 +22,12 @@ import {
     type ChangePasswordInput,
     type UpdateProfileInput,
 } from "@/schemas/profile.schema";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { KeyRound, Loader2, UserCircle } from "lucide-react";
+import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 export default function ProfilePage() {
   const { data: session } = useSession();
