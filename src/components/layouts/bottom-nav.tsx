@@ -1,10 +1,10 @@
 "use client";
 
+import { NAV_ITEMS } from "@/constants";
+import { cn } from "@/lib/utils";
+import { CreditCard, Home, Users, UsersRound } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
-import { NAV_ITEMS } from "@/constants";
-import { Home, Users, CreditCard, UsersRound } from "lucide-react";
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   Home,
@@ -18,7 +18,7 @@ export function BottomNav() {
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 px-2 pb-2 pb-safe lg:hidden">
-      <div className="mx-auto flex max-w-md items-stretch justify-around gap-1 rounded-[22px] border border-border bg-card p-1.5 shadow-[0_12px_30px_-18px_rgba(15,23,42,0.45)]">
+      <div className="mx-auto flex max-w-md items-stretch justify-around gap-1 rounded-[22px] border border-border bg-card p-1.5 shadow-[0_10px_24px_-18px_rgba(15,23,42,0.35)]">
         {NAV_ITEMS.main.map((item) => {
           const Icon = iconMap[item.icon];
           const isActive =

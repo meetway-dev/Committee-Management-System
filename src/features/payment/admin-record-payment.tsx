@@ -51,14 +51,26 @@ export function AdminRecordPayment({ committeeId, members, contributionAmount }:
   const [proofUrl, setProofUrl] = useState("");
   const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
-  const { register, handleSubmit, setValue, formState: { errors } } = useForm<RecordForm>({
+  const today = new Date().toISOString().slice(0, 10);
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm<RecordForm>({
     resolver: zodResolver(recordSchema),
     defaultValues: {
+      userId: "",
       amount: contributionAmount,
       paymentMethod: "cash",
-      paidDate: new Date().toISOString().slice(0, 10),
+      paidDate: today,
     },
   });
+
+  const selectedUserId = watch("userId");
+  const selectedPaymentMethod = watch("paymentMethod");
 
   async function onSubmit(data: RecordForm) {
     setSubmitting(true);
@@ -114,7 +126,12 @@ export function AdminRecordPayment({ committeeId, members, contributionAmount }:
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="userId">Member</Label>
-            <Select onValueChange={(v: string | null) => { if (v) setValue("userId", v); }}>
+            <Select
+              value={selectedUserId || undefined}
+              onValueChange={(v: string | null) => {
+                if (v) setValue("userId", v, { shouldValidate: true });
+              }}
+            >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select member" />
               </SelectTrigger>
@@ -142,7 +159,12 @@ export function AdminRecordPayment({ committeeId, members, contributionAmount }:
 
           <div className="space-y-2">
             <Label htmlFor="paymentMethod">Payment Method</Label>
-            <Select value={"cash"} defaultValue="cash" onValueChange={(v: string | null) => { if (v) setValue("paymentMethod", v ?? "cash"); }}>
+            <Select
+              value={selectedPaymentMethod || "cash"}
+              onValueChange={(v: string | null) => {
+                if (v) setValue("paymentMethod", v, { shouldValidate: true });
+              }}
+            >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select method" />
               </SelectTrigger>

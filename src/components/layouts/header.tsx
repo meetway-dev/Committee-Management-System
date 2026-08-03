@@ -1,18 +1,18 @@
 "use client";
 
-import Link from "next/link";
-import { useSession } from "next-auth/react";
-import { LogOut, User, Settings, CircleDollarSign } from "lucide-react";
+import { logoutUser } from "@/actions/auth.actions";
 import { GradientAvatar } from "@/components/shared/gradient-avatar";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { logoutUser } from "@/actions/auth.actions";
 import { APP_NAME } from "@/constants";
+import { CircleDollarSign, LogOut, Settings, User } from "lucide-react";
+import { useSession } from "next-auth/react";
+import Link from "next/link";
 
 function Wordmark() {
   return (
@@ -32,8 +32,8 @@ export function Header() {
   const user = session?.user;
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 flex h-14 items-center bg-background">
-      <div className="flex w-full items-center justify-between gap-2 px-3 sm:px-4 lg:px-6">
+    <header className="fixed top-0 left-0 right-0 z-50 border-b border-border/80 bg-background/90 backdrop-blur-xl">
+      <div className="flex h-14 w-full items-center justify-between gap-2 px-3 sm:px-4 lg:px-6">
         <Wordmark />
 
         <DropdownMenu>
