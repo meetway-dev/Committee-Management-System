@@ -15,7 +15,6 @@ import { PublishCommitteeButton } from "@/features/committee/publish-committee-b
 import { MemberRemoveButton } from "@/features/member/member-remove-button";
 import { AdminRecordPayment } from "@/features/payment/admin-record-payment";
 import { PaymentActions } from "@/features/payment/payment-actions";
-import { PaymentSubmitForm } from "@/features/payment/payment-submit-form";
 import { cn } from "@/lib/utils";
 import { formatCurrency, formatDate } from "@/utils/format";
 import {
@@ -149,6 +148,12 @@ export default async function CommitteeDetailPage({ params }: PageProps) {
           </div>
         </div>
       </div>
+
+      {!isAdmin && (
+        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-3 text-[0.8rem] text-amber-900 dark:border-amber-900/60 dark:bg-amber-950/20 dark:text-amber-200">
+          Read-only access for this circle. Only the admin can manage members, settings, and payment records.
+        </div>
+      )}
 
       {/* Key numbers — value-first pills */}
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
@@ -352,14 +357,6 @@ export default async function CommitteeDetailPage({ params }: PageProps) {
 
         {/* Payments */}
         <TabsContent value="payments" className="mt-2.5 space-y-3">
-          {committee.status === "active" && (
-            <PaymentSubmitForm
-              committeeId={id}
-              contributionAmount={committee.contributionAmount}
-              currency={committee.currency}
-              currentRound={committee.currentRound}
-            />
-          )}
           {isAdmin && (
             <AdminRecordPayment
               committeeId={id}

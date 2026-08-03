@@ -55,6 +55,7 @@ export async function createCommittee(
       turnMode: data.turnMode as "random" | "fixed",
       rules: data.rules,
       admin: session.user.id,
+      currentRound: 1,
       totalRounds: data.maxMembers,
       status: "draft" as const,
     });
@@ -205,6 +206,12 @@ export async function publishCommittee(id: string): Promise<ApiResponse> {
     }
 
     committee.status = "active";
+    if (committee.currentRound < 1) {
+      committee.currentRound = 1;
+    }
+    if (committee.totalRounds <= 0) {
+      committee.totalRounds = committee.maxMembers;
+    }
     await committee.save();
 
     revalidatePath(`/committees/${id}`);

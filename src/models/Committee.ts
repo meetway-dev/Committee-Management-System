@@ -44,8 +44,8 @@ const committeeSchema = new Schema<CommitteeDocument>(
     rules: { type: String },
     status: { type: String, enum: ["draft", "active", "completed", "archived"], default: "draft" },
     turnMode: { type: String, enum: ["random", "fixed"], default: "random" },
-    currentRound: { type: Number, default: 0 },
-    totalRounds: { type: Number, default: 0 },
+    currentRound: { type: Number, default: 1 },
+    totalRounds: { type: Number, default: 1 },
     deletedAt: { type: Date, default: null },
   },
   { timestamps: true }

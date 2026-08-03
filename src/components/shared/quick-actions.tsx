@@ -29,12 +29,12 @@ export function QuickActions({ actions, className }: QuickActionsProps) {
         <Link
           key={href + label}
           href={href}
-          className="flex min-h-[44px] min-w-[68px] flex-1 shrink-0 flex-col items-center justify-center gap-1.5 rounded-xl bg-card px-2 py-2.5 ring-1 ring-foreground/[0.06] transition-all duration-150 hover:ring-primary/30 active:scale-[0.97]"
+          className="group flex min-h-[44px] min-w-[68px] flex-1 shrink-0 flex-col items-center justify-center gap-2 rounded-2xl px-2 py-3 transition-all duration-150 active:scale-[0.96]"
         >
-          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-soft text-primary">
-            <Icon className="h-4 w-4" />
+          <span className="flex h-11 w-11 items-center justify-center rounded-full bg-card text-primary ring-1 ring-foreground/[0.06] shadow-[0_4px_14px_-6px_rgba(124,58,237,0.30)] transition-all duration-200 group-hover:mesh-brand group-hover:text-white group-hover:ring-transparent">
+            <Icon className="h-[18px] w-[18px]" />
           </span>
-          <span className="text-[10px] font-semibold leading-none text-muted-foreground">
+          <span className="text-[10px] font-semibold leading-none text-muted-foreground transition-colors group-hover:text-foreground">
             {label}
           </span>
         </Link>

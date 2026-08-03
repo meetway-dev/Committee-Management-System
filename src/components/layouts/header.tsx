@@ -51,7 +51,7 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
 function Wordmark() {
   return (
     <Link href="/dashboard" className="flex items-center gap-2">
-      <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 text-white shadow-sm">
+      <span className="mesh-brand flex h-8 w-8 items-center justify-center rounded-2xl text-white shadow-[0_4px_12px_-4px_rgba(124,58,237,0.6)]">
         <CircleDollarSign className="h-4 w-4" />
       </span>
       <span className="font-heading text-base font-extrabold tracking-tight">
@@ -67,7 +67,7 @@ export function Header() {
   const user = session?.user;
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 flex h-14 items-center border-b border-border/60 bg-card/85 backdrop-blur-xl">
+    <header className="glass fixed top-0 left-0 right-0 z-50 flex h-14 items-center border-b border-border/50">
       <div className="flex w-full items-center justify-between gap-2 px-3 sm:px-4 lg:px-6">
         <div className="flex items-center gap-2">
           <Sheet>

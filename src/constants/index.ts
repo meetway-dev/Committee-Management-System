@@ -33,6 +33,9 @@ export const PAYMENT_METHODS = [
   { value: "easypaisa", label: "EasyPaisa" },
   { value: "jazzcash", label: "JazzCash" },
   { value: "cash", label: "Cash" },
+  { value: "mobile-wallet", label: "Mobile Wallet" },
+  { value: "cheque", label: "Cheque" },
+  { value: "online", label: "Online Payment" },
   { value: "other", label: "Other" },
 ] as const;
 
@@ -57,12 +60,13 @@ export const COUNTRIES = [
 ] as const;
 
 export const NAV_ITEMS = {
+  // Mobile bottom nav. Profile is intentionally absent — the top bar's avatar
+  // menu already owns it, and 4 tabs keeps the pill from crowding.
   main: [
     { href: "/dashboard", label: "Home", icon: "Home" },
     { href: "/committees", label: "Circles", icon: "Users" },
     { href: "/payments", label: "Payments", icon: "CreditCard" },
     { href: "/members", label: "Members", icon: "UsersRound" },
-    { href: "/profile", label: "Profile", icon: "User" },
   ],
   sidebar: [
     { href: "/dashboard", label: "Dashboard", icon: "LayoutDashboard" },

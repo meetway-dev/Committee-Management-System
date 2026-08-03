@@ -9,7 +9,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <Header />
       <div className="flex">
         <Sidebar />
-        <main className="flex-1 pt-14 pb-24 lg:pl-56 lg:pb-8">
+        <main className="flex-1 pt-14 pb-32 lg:pl-56 lg:pb-8">
           <div className="mx-auto w-full max-w-5xl space-y-4 px-3 py-4 sm:px-4 lg:px-6">
             {children}
           </div>

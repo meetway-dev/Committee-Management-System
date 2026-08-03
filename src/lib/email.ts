@@ -1,5 +1,11 @@
+import nodemailer from "nodemailer";
+
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
-const EMAIL_FROM = process.env.EMAIL_FROM;
+const EMAIL_FROM = process.env.EMAIL_FROM || process.env.GMAIL_USER || process.env.SMTP_USER;
+const SMTP_HOST = process.env.SMTP_HOST || "smtp.gmail.com";
+const SMTP_PORT = Number(process.env.SMTP_PORT || 587);
+const SMTP_USER = process.env.SMTP_USER || process.env.GMAIL_USER;
+const SMTP_PASSWORD = process.env.SMTP_PASSWORD || process.env.GMAIL_APP_PASSWORD;
 
 export async function sendInvitationEmail(
   email: string,
@@ -36,6 +42,49 @@ export async function sendInvitationEmail(
 
     return true;
   } catch {
+    return false;
+  }
+}
+
+export async function sendPasswordResetEmail(
+  email: string,
+  resetUrl: string
+): Promise<boolean> {
+  if (!EMAIL_FROM || !SMTP_USER || !SMTP_PASSWORD) {
+    console.info("Password reset email is mocked because SMTP is not configured.", {
+      email,
+      resetUrl,
+    });
+    return false;
+  }
+
+  try {
+    const transporter = nodemailer.createTransport({
+      host: SMTP_HOST,
+      port: SMTP_PORT,
+      secure: false,
+      auth: {
+        user: SMTP_USER,
+        pass: SMTP_PASSWORD,
+      },
+    });
+
+    await transporter.sendMail({
+      from: EMAIL_FROM,
+      to: email,
+      subject: "Reset your password",
+      html: `
+        <p>You requested a password reset.</p>
+        <p><a href="${resetUrl}">Click here to reset your password</a></p>
+        <p>If the link does not work, copy this URL into your browser:</p>
+        <p>${resetUrl}</p>
+        <p>This link expires in 30 minutes.</p>
+      `,
+    });
+
+    return true;
+  } catch (error) {
+    console.error("Password reset email failed:", error);
     return false;
   }
 }

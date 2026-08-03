@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document, Model } from "mongoose";
+import mongoose, { Document, Model, Schema } from "mongoose";
 
 export interface PaymentDocument extends Document {
   committee: mongoose.Types.ObjectId;
@@ -29,7 +29,19 @@ const paymentSchema = new Schema<PaymentDocument>(
     dueDate: { type: Date, required: true },
     paidDate: { type: Date },
     status: { type: String, enum: ["pending", "approved", "rejected", "late", "overdue"], default: "pending" },
-    paymentMethod: { type: String, enum: ["bank-transfer", "easypaisa", "jazzcash", "cash", "other"] },
+    paymentMethod: {
+      type: String,
+      enum: [
+        "bank-transfer",
+        "easypaisa",
+        "jazzcash",
+        "cash",
+        "mobile-wallet",
+        "cheque",
+        "online",
+        "other",
+      ],
+    },
     proofImage: { type: String },
     notes: { type: String },
     approvedBy: { type: Schema.Types.ObjectId, ref: "User" },

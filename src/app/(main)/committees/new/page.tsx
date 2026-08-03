@@ -231,17 +231,20 @@ export default function CreateCommitteePage() {
                     <SelectItem value="fixed">Fixed</SelectItem>
                   </SelectContent>
                 </Select>
-                <input type="hidden" value={turnModeVal} {...register("turnMode")} />
                 <p className="text-xs text-muted-foreground">
                   Random is assigned when the committee starts. Fixed shows turn order immediately.
                 </p>
-                <Input
-                  id="lateFee"
-                  type="number"
-                  placeholder="0"
-                  {...register("lateFee", { valueAsNumber: true })}
-                />
               </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="lateFee">Late Fee</Label>
+              <Input
+                id="lateFee"
+                type="number"
+                placeholder="0"
+                {...register("lateFee", { valueAsNumber: true })}
+              />
             </div>
           </CardContent>
         </Card>

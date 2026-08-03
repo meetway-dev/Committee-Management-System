@@ -35,7 +35,7 @@ export function Fab() {
     <Link
       href={config.href}
       aria-label={config.label}
-      className="fixed bottom-20 right-4 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-[0_8px_24px_-6px_rgba(5,150,105,0.6)] transition-all duration-150 hover:shadow-[0_10px_28px_-6px_rgba(5,150,105,0.7)] active:scale-95 lg:bottom-6 lg:right-6"
+      className="mesh-brand fixed bottom-28 right-4 z-40 flex h-14 w-14 items-center justify-center rounded-full text-white shadow-[0_10px_28px_-6px_rgba(124,58,237,0.65)] transition-all duration-150 hover:shadow-[0_14px_34px_-6px_rgba(124,58,237,0.75)] active:scale-95 lg:bottom-6 lg:right-6"
     >
       <Icon className="h-6 w-6" />
     </Link>

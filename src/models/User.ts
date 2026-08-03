@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document, Model } from "mongoose";
+import mongoose, { Document, Model, Schema } from "mongoose";
 
 export interface UserDocument extends Document {
   name: string;
@@ -14,6 +14,8 @@ export interface UserDocument extends Document {
   emailVerified?: Date | null;
   provider: "credentials" | "google";
   providerId?: string;
+  resetToken?: string | null;
+  resetTokenExpiresAt?: Date | null;
   status: "active" | "suspended" | "deleted";
   deletedAt?: Date | null;
   createdAt: Date;
@@ -35,6 +37,8 @@ const userSchema = new Schema<UserDocument>(
     emailVerified: { type: Date, default: null },
     provider: { type: String, enum: ["credentials", "google"], default: "credentials" },
     providerId: { type: String },
+    resetToken: { type: String, default: null },
+    resetTokenExpiresAt: { type: Date, default: null },
     status: { type: String, enum: ["active", "suspended", "deleted"], default: "active" },
     deletedAt: { type: Date, default: null },
   },

@@ -9,7 +9,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 hover:shadow-md",
+          "mesh-brand text-white shadow-[0_6px_18px_-8px_rgba(124,58,237,0.65)] hover:brightness-110 hover:shadow-[0_10px_24px_-8px_rgba(124,58,237,0.75)]",
         outline:
           "border-border bg-background hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
         secondary:
@@ -46,12 +46,18 @@ function Button({
   className,
   variant = "default",
   size = "default",
+  render,
+  nativeButton,
   ...props
 }: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
   return (
     <ButtonPrimitive
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
+      render={render}
+      // `render` replaces the native <button> (e.g. with a next/link <a>), so
+      // opt out of native button semantics unless the caller says otherwise.
+      nativeButton={nativeButton ?? !render}
       {...props}
     />
   )

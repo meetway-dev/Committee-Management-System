@@ -34,7 +34,7 @@ export function EmptyState({
           aria-hidden
           className="absolute inset-0 -m-3 rounded-full bg-primary/5"
         />
-        <div className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500/15 to-teal-500/10 text-primary">
+        <div className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500/15 to-fuchsia-500/10 text-primary">
           <Icon className="h-6 w-6" />
         </div>
       </div>

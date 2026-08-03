@@ -7,6 +7,12 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  /* Base surface/brand colours. Without these the bg-card, bg-popover,
+     bg-primary and text-primary utilities emit no CSS at all. */
+  --color-card: var(--card);
+  --color-popover: var(--popover);
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
   --color-muted-foreground: var(--muted-foreground);
   --color-muted: var(--muted);
   --color-accent-foreground: var(--accent-foreground);
@@ -49,88 +55,97 @@
 }
 
 :root {
-  --background: #f6f8f7;
-  --foreground: #0b1512;
+  --background: #f7f6fb;
+  --foreground: #14101f;
   --card: #ffffff;
-  --card-foreground: #0b1512;
+  --card-foreground: #14101f;
   --popover: #ffffff;
-  --popover-foreground: #0b1512;
-  --primary: #059669;
+  --popover-foreground: #14101f;
+  --primary: #7c3aed;
   --primary-foreground: #ffffff;
   --primary-soft: color-mix(in oklch, var(--primary), transparent 90%);
-  --secondary: #0f2b23;
-  --secondary-foreground: #f4faf7;
-  --muted: #eef2f0;
-  --muted-foreground: #64766f;
-  --accent: #eaf4ef;
-  --accent-foreground: #0b2e22;
-  --destructive: #dc2626;
+  --secondary: #1d1233;
+  --secondary-foreground: #f7f4ff;
+  --muted: #f1eef8;
+  --muted-foreground: #6c6480;
+  --accent: #f3edfd;
+  --accent-foreground: #2a1a52;
+  --destructive: #e11d48;
   --success: #059669;
   --success-foreground: #ffffff;
   --warning: #d97706;
   --warning-foreground: #ffffff;
-  --danger: #dc2626;
+  --danger: #e11d48;
   --danger-foreground: #ffffff;
-  --border: #e3e9e6;
+  --border: #e5e2ee;
   --input: #ffffff;
-  --ring: #6ee7b7;
-  --chart-1: #059669;
-  --chart-2: #14b8a6;
-  --chart-3: #0ea5e9;
-  --chart-4: #f59e0b;
-  --chart-5: #f97316;
-  --radius: 0.875rem;
+  --ring: #c4b5fd;
+  --chart-1: #7c3aed;
+  --chart-2: #d946ef;
+  --chart-3: #ec4899;
+  --chart-4: #8b5cf6;
+  --chart-5: #f472b6;
+  --radius: 1rem;
   --sidebar: #ffffff;
-  --sidebar-foreground: #0b1512;
-  --sidebar-primary: #059669;
+  --sidebar-foreground: #14101f;
+  --sidebar-primary: #7c3aed;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #eef2f0;
-  --sidebar-accent-foreground: #0b1512;
-  --sidebar-border: #e3e9e6;
-  --sidebar-ring: #6ee7b7;
+  --sidebar-accent: #f1eef8;
+  --sidebar-accent-foreground: #14101f;
+  --sidebar-border: #e5e2ee;
+  --sidebar-ring: #c4b5fd;
+  /* Brand mesh stops — reused by .mesh-brand, hero cards, and avatars. */
+  --brand-1: #8b5cf6;
+  --brand-2: #a855f7;
+  --brand-3: #d946ef;
+  --brand-4: #ec4899;
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-heading: var(--font-plus-jakarta), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 }
 
 .dark {
-  --background: #071310;
-  --foreground: #eef4f1;
-  --card: #0e1c18;
-  --card-foreground: #eef4f1;
-  --popover: #0e1c18;
-  --popover-foreground: #eef4f1;
-  --primary: #10b981;
-  --primary-foreground: #05221a;
+  --background: #0b0714;
+  --foreground: #f0ecf8;
+  --card: #16101f;
+  --card-foreground: #f0ecf8;
+  --popover: #16101f;
+  --popover-foreground: #f0ecf8;
+  --primary: #a78bfa;
+  --primary-foreground: #1a0b33;
   --primary-soft: color-mix(in oklch, var(--primary), transparent 86%);
-  --secondary: #9db3aa;
-  --secondary-foreground: #eef4f1;
-  --muted: #16261f;
-  --muted-foreground: #a9bdb4;
-  --accent: #1b2f27;
-  --accent-foreground: #eef4f1;
-  --destructive: #f87171;
-  --success: #10b981;
+  --secondary: #b0a5c8;
+  --secondary-foreground: #f0ecf8;
+  --muted: #1f1730;
+  --muted-foreground: #b3a8c9;
+  --accent: #291d3f;
+  --accent-foreground: #f0ecf8;
+  --destructive: #fb7185;
+  --success: #34d399;
   --success-foreground: #05221a;
   --warning: #fbbf24;
   --warning-foreground: #271a05;
-  --danger: #f87171;
-  --danger-foreground: #2a0a0a;
-  --border: rgba(157, 179, 170, 0.18);
-  --input: #16261f;
-  --ring: #34d399;
-  --chart-1: #10b981;
-  --chart-2: #2dd4bf;
-  --chart-3: #38bdf8;
-  --chart-4: #fbbf24;
-  --chart-5: #fb923c;
-  --sidebar: #0e1c18;
-  --sidebar-foreground: #eef4f1;
-  --sidebar-primary: #10b981;
-  --sidebar-primary-foreground: #05221a;
-  --sidebar-accent: #16261f;
-  --sidebar-accent-foreground: #eef4f1;
-  --sidebar-border: rgba(157, 179, 170, 0.18);
-  --sidebar-ring: #34d399;
+  --danger: #fb7185;
+  --danger-foreground: #2a0a12;
+  --border: rgba(176, 165, 200, 0.18);
+  --input: #1f1730;
+  --ring: #a78bfa;
+  --chart-1: #a78bfa;
+  --chart-2: #e879f9;
+  --chart-3: #f472b6;
+  --chart-4: #c084fc;
+  --chart-5: #f9a8d4;
+  --sidebar: #16101f;
+  --sidebar-foreground: #f0ecf8;
+  --sidebar-primary: #a78bfa;
+  --sidebar-primary-foreground: #1a0b33;
+  --sidebar-accent: #1f1730;
+  --sidebar-accent-foreground: #f0ecf8;
+  --sidebar-border: rgba(176, 165, 200, 0.18);
+  --sidebar-ring: #a78bfa;
+  --brand-1: #7c3aed;
+  --brand-2: #9333ea;
+  --brand-3: #c026d3;
+  --brand-4: #db2777;
 }
 
 @layer base {
@@ -146,8 +161,8 @@
   body {
     @apply min-h-screen bg-background text-foreground antialiased;
     background:
-      radial-gradient(circle at top left, color-mix(in oklch, var(--primary), transparent 92%), transparent 26%),
-      radial-gradient(circle at bottom right, color-mix(in oklch, var(--chart-2), transparent 93%), transparent 28%),
+      radial-gradient(ellipse 90% 45% at 50% -15%, color-mix(in oklch, var(--brand-3), transparent 93%), transparent 65%),
+      radial-gradient(circle at 100% 0%, color-mix(in oklch, var(--brand-1), transparent 94%), transparent 30%),
       var(--background);
     background-attachment: fixed;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
@@ -189,6 +204,52 @@
   .tabular {
     font-variant-numeric: tabular-nums;
   }
+}
+
+/* Declared with @utility (not @layer utilities) so they compose with variants
+   like group-hover: and dark: — required in Tailwind v4. */
+
+/* Signature brand mesh — violet → fuchsia → pink, layered radial blooms.
+   Used by the balance hero, landing hero, and any full-bleed brand surface. */
+@utility mesh-brand {
+  background-color: var(--brand-2);
+  background-image:
+    radial-gradient(at 12% 8%, var(--brand-1) 0px, transparent 55%),
+    radial-gradient(at 88% 12%, var(--brand-3) 0px, transparent 52%),
+    radial-gradient(at 78% 92%, var(--brand-4) 0px, transparent 55%),
+    radial-gradient(at 18% 88%, var(--brand-2) 0px, transparent 50%);
+}
+
+/* Halftone dot texture from the reference onboarding screen. Pair with
+   mesh-brand on a decorative overlay layer. */
+@utility halftone {
+  background-image: radial-gradient(currentColor 1px, transparent 1.2px);
+  background-size: 8px 8px;
+}
+
+/* Frosted panel — floating nav, sheets, sticky bars. */
+@utility glass {
+  background: color-mix(in oklch, var(--card), transparent 25%);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+
+@utility gradient-text {
+  background-image: linear-gradient(
+    100deg,
+    var(--brand-1),
+    var(--brand-3) 55%,
+    var(--brand-4)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Soft violet elevation, matching the reference's diffused shadows. */
+@utility shadow-brand {
+  box-shadow: 0 18px 40px -18px
+    color-mix(in oklch, var(--brand-2), transparent 45%);
 }
 
 @keyframes rise {

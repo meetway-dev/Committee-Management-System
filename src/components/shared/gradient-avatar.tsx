@@ -1,12 +1,12 @@
 import { cn } from "@/lib/utils";
 
 const gradients = [
-  "from-emerald-500 to-teal-500",
-  "from-teal-500 to-cyan-500",
-  "from-green-500 to-emerald-600",
-  "from-emerald-600 to-green-500",
-  "from-cyan-500 to-emerald-500",
-  "from-lime-500 to-emerald-500",
+  "from-violet-500 to-fuchsia-500",
+  "from-fuchsia-500 to-pink-500",
+  "from-purple-500 to-violet-600",
+  "from-pink-500 to-rose-400",
+  "from-indigo-500 to-purple-500",
+  "from-violet-600 to-pink-500",
 ] as const;
 
 function gradientFor(seed: string): string {
@@ -33,7 +33,7 @@ interface GradientAvatarProps {
 }
 
 /**
- * Avatar with a deterministic emerald gradient fallback derived from the name,
+ * Avatar with a deterministic violet/pink gradient fallback derived from the name,
  * so every member/committee gets a stable, on-brand identity colour.
  */
 export function GradientAvatar({

@@ -38,7 +38,7 @@ export function StatCard({
   return (
     <div
       className={cn(
-        "rounded-2xl bg-card p-3 ring-1 ring-foreground/[0.06] shadow-[0_1px_2px_rgba(11,21,18,0.04)] transition-all duration-150 hover:ring-primary/20",
+        "rounded-3xl bg-card p-3.5 ring-1 ring-foreground/[0.05] shadow-[0_1px_2px_rgba(20,16,31,0.03),0_10px_26px_-16px_rgba(124,58,237,0.18)] transition-all duration-150 hover:ring-primary/25",
         className
       )}
     >
@@ -55,7 +55,7 @@ export function StatCard({
           <span
             className={cn(
               "flex items-center gap-0.5 text-[10px] font-bold",
-              trend.direction === "up" ? "text-emerald-600" : "text-red-600"
+              trend.direction === "up" ? "text-success" : "text-danger"
             )}
           >
             {trend.direction === "up" ? (

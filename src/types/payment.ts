@@ -1,5 +1,13 @@
 export type PaymentStatus = "pending" | "approved" | "rejected" | "late" | "overdue";
-export type PaymentMethod = "bank-transfer" | "easypaisa" | "jazzcash" | "cash" | "other";
+export type PaymentMethod =
+  | "bank-transfer"
+  | "easypaisa"
+  | "jazzcash"
+  | "cash"
+  | "mobile-wallet"
+  | "cheque"
+  | "online"
+  | "other";
 
 export interface IPayment {
   _id: string;

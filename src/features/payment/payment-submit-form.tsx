@@ -19,6 +19,7 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { PAYMENT_METHODS } from "@/constants";
 import { formatCurrency } from "@/utils/format";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CreditCard, Loader2 } from "lucide-react";
@@ -52,6 +53,7 @@ export function PaymentSubmitForm({
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
   const [proofPreview, setProofPreview] = useState<string | null>(null);
+  const [proofUrl, setProofUrl] = useState("");
   const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
   const {
@@ -71,11 +73,25 @@ export function PaymentSubmitForm({
   async function onSubmit(data: PaymentFormData) {
     setSubmitting(true);
     try {
+      const normalizedUrl = proofUrl.trim();
+      if (normalizedUrl) {
+        try {
+          const url = new URL(normalizedUrl);
+          if (url.protocol !== "http:" && url.protocol !== "https:") {
+            throw new Error("Invalid protocol");
+          }
+        } catch {
+          toast.error("Please enter a valid public image URL starting with http:// or https://");
+          setSubmitting(false);
+          return;
+        }
+      }
+
       const result = await submitPayment(committeeId, {
         amount: data.amount,
         paymentMethod: data.paymentMethod,
         notes: data.notes,
-        proofImage: proofPreview ?? undefined,
+        proofImage: normalizedUrl || undefined,
       });
 
       if (result.success) {
@@ -129,11 +145,11 @@ export function PaymentSubmitForm({
                 <SelectValue placeholder="Select method" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="cash">Cash</SelectItem>
-                <SelectItem value="bank-transfer">Bank Transfer</SelectItem>
-                <SelectItem value="mobile-wallet">Mobile Wallet</SelectItem>
-                <SelectItem value="cheque">Cheque</SelectItem>
-                <SelectItem value="online">Online Payment</SelectItem>
+                {PAYMENT_METHODS.map((method) => (
+                  <SelectItem key={method.value} value={method.value}>
+                    {method.label}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
             {errors.paymentMethod && (
@@ -155,7 +171,17 @@ export function PaymentSubmitForm({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="proof">Proof / Screenshot (optional)</Label>
+            <Label htmlFor="proof-url">Proof URL (optional)</Label>
+            <Input
+              id="proof-url"
+              type="url"
+              placeholder="https://example.com/payment-proof.jpg"
+              value={proofUrl}
+              onChange={(e) => setProofUrl(e.target.value)}
+            />
+            <p className="text-xs text-muted-foreground">
+              Free-tier-safe option: use a public image URL. Local file previews are kept in-browser only and are not persisted on Vercel.
+            </p>
             <input
               id="proof"
               type="file"
@@ -179,7 +205,6 @@ export function PaymentSubmitForm({
                 reader.readAsDataURL(file);
               }}
             />
-            <p className="text-xs text-muted-foreground">Image hosting migration coming soon — current uploads are saved locally for demo purposes.</p>
             {proofPreview && (
               <img src={proofPreview} alt="preview" className="mt-2 max-h-40 object-contain" />
             )}

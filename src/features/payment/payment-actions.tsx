@@ -82,7 +82,7 @@ export function PaymentActions({
           size="sm"
           onClick={handleApprove}
           disabled={approving}
-          className="h-7 w-7 p-0 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-950"
+          className="h-7 w-7 p-0 text-success hover:bg-success/10 hover:text-success"
         >
           {approving ? (
             <Loader2 className="h-3.5 w-3.5 animate-spin" />

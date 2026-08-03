@@ -4,7 +4,16 @@ export const submitPaymentSchema = z.object({
   committeeId: z.string().min(1, "Committee is required"),
   amount: z.number().positive("Amount must be greater than 0"),
   paymentMethod: z
-    .enum(["bank-transfer", "easypaisa", "jazzcash", "cash", "other"])
+    .enum([
+      "bank-transfer",
+      "easypaisa",
+      "jazzcash",
+      "cash",
+      "mobile-wallet",
+      "cheque",
+      "online",
+      "other",
+    ])
     .optional(),
   proofImage: z.string().url().optional(),
   notes: z.string().max(500).optional(),
