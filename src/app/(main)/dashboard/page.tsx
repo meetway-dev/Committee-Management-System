@@ -122,7 +122,7 @@ export default async function DashboardPage() {
       </div>
 
       {nextPayment && (
-        <div className="rounded-2xl border border-border bg-card p-3.5">
+        <div className="rounded-[var(--card-radius)] border border-border bg-card p-3.5 shadow-[0_10px_28px_-18px_rgba(20,16,31,0.12)]">
           <div className="flex items-center justify-between gap-3">
             <div>
               <p className="text-[11px] font-medium text-muted-foreground">
@@ -160,7 +160,7 @@ export default async function DashboardPage() {
       {recentActivity.length > 0 && (
         <div className="space-y-2">
           <SectionHeader title="Recent activity" href="/payments" />
-          <div className="rounded-2xl bg-card p-1.5 ring-1 ring-foreground/[0.06]">
+          <div className="rounded-[var(--card-radius)] bg-card p-1.5 ring-1 ring-foreground/[0.06] shadow-[0_10px_26px_-20px_rgba(20,16,31,0.1)]">
             <ListGroup>
               {recentActivity.map((payment) => (
                 <ListRow

@@ -120,8 +120,8 @@ export default function LandingPage() {
               </div>
 
               <div className="relative">
-                <div className="rounded-[28px] border border-border bg-card p-5 shadow-[0_24px_80px_-40px_rgba(124,58,237,0.45)]">
-                  <div className="rounded-[22px] border border-border bg-muted/40 p-4">
+                <div className="rounded-[var(--card-radius)] border border-border bg-card p-5 shadow-[0_24px_80px_-40px_rgba(124,58,237,0.28)]">
+                  <div className="rounded-[var(--card-radius)] border border-border bg-muted/40 p-4">
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
@@ -135,21 +135,21 @@ export default function LandingPage() {
                     </div>
 
                     <div className="mt-6 space-y-3">
-                      <div className="rounded-2xl bg-background p-3">
+                      <div className="rounded-[var(--card-radius)] bg-background p-3">
                         <div className="flex items-center justify-between text-sm">
                           <span className="text-muted-foreground">Members</span>
                           <span className="font-semibold">3 / 10</span>
                         </div>
                       </div>
 
-                      <div className="rounded-2xl bg-background p-3">
+                      <div className="rounded-[var(--card-radius)] bg-background p-3">
                         <div className="flex items-center justify-between text-sm">
                           <span className="text-muted-foreground">Contribution</span>
                           <span className="font-semibold">Rs 15,000</span>
                         </div>
                       </div>
 
-                      <div className="rounded-2xl bg-background p-3">
+                      <div className="rounded-[var(--card-radius)] bg-background p-3">
                         <div className="flex items-center justify-between text-sm">
                           <span className="text-muted-foreground">Current round</span>
                           <span className="font-semibold">2 of 5</span>
@@ -178,7 +178,7 @@ export default function LandingPage() {
               {features.map((feature) => (
                 <div
                   key={feature.title}
-                  className="rounded-3xl border border-border bg-card p-6 shadow-sm transition-transform duration-200 hover:-translate-y-0.5"
+                  className="rounded-[var(--card-radius)] border border-border bg-card p-6 shadow-sm transition-transform duration-200 hover:-translate-y-0.5"
                 >
                   <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
                     <feature.icon className="h-5 w-5" />

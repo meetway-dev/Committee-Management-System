@@ -38,7 +38,7 @@ export function StatCard({
   return (
     <div
       className={cn(
-        "rounded-3xl bg-card p-3.5 ring-1 ring-foreground/[0.05] shadow-[0_1px_2px_rgba(20,16,31,0.03),0_10px_26px_-16px_rgba(124,58,237,0.18)] transition-all duration-150 hover:ring-primary/25",
+        "rounded-[var(--card-radius)] bg-card p-3.5 ring-1 ring-foreground/[0.05] shadow-[0_10px_26px_-18px_rgba(124,58,237,0.2)] transition-all duration-150 hover:ring-primary/25",
         className
       )}
     >

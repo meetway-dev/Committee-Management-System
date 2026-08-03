@@ -26,7 +26,7 @@ export function CommitteeCard({ committee }: CommitteeCardProps) {
   return (
     <Link
       href={`/committees/${committee._id}`}
-      className="group flex flex-col gap-2.5 rounded-2xl bg-card p-3 ring-1 ring-foreground/[0.06] shadow-[0_1px_2px_rgba(11,21,18,0.04)] transition-all duration-150 hover:ring-primary/25 active:scale-[0.99]"
+      className="group flex flex-col gap-2.5 rounded-[var(--card-radius)] bg-card p-3 ring-1 ring-foreground/[0.06] shadow-[0_8px_24px_-20px_rgba(11,21,18,0.14)] transition-all duration-150 hover:ring-primary/25 active:scale-[0.99]"
     >
       <div className="flex items-center gap-2.5">
         <GradientAvatar name={committee.name} size="md" />
@@ -76,7 +76,7 @@ export function CommitteeCardList({
 }: CommitteeCardListProps) {
   if (committees.length === 0) {
     return (
-      <p className="rounded-2xl bg-card/60 py-8 text-center text-[0.8rem] text-muted-foreground ring-1 ring-foreground/[0.05]">
+      <p className="rounded-[var(--card-radius)] bg-card/60 py-8 text-center text-[0.8rem] text-muted-foreground ring-1 ring-foreground/[0.05]">
         {emptyMessage}
       </p>
     );

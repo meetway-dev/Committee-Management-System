@@ -85,7 +85,8 @@
   --chart-3: #ec4899;
   --chart-4: #8b5cf6;
   --chart-5: #f472b6;
-  --radius: 1rem;
+  --radius: 1.125rem;
+  --card-radius: 1.125rem;
   --sidebar: #ffffff;
   --sidebar-foreground: #14101f;
   --sidebar-primary: #7c3aed;

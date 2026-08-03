@@ -200,7 +200,7 @@ export default async function CommitteeDetailPage({ params }: PageProps) {
         )}
 
       {committee.status === "active" && (
-        <div className="rounded-2xl bg-card p-3.5 ring-1 ring-foreground/[0.06]">
+        <div className="rounded-[var(--card-radius)] bg-card p-3.5 ring-1 ring-foreground/[0.06] shadow-[0_10px_26px_-20px_rgba(20,16,31,0.1)]">
           <div className="flex items-baseline justify-between">
             <p className="text-[0.8rem] font-semibold">
               Round {committee.currentRound}

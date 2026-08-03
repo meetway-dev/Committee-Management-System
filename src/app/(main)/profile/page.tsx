@@ -111,7 +111,7 @@ export default function ProfilePage() {
       />
 
       {/* Identity hero */}
-      <div className="flex items-center gap-3 rounded-2xl bg-card p-3.5 ring-1 ring-foreground/[0.06]">
+      <div className="flex items-center gap-3 rounded-[var(--card-radius)] bg-card p-3.5 ring-1 ring-foreground/[0.06] shadow-[0_8px_24px_-20px_rgba(20,16,31,0.12)]">
         <GradientAvatar
           name={user?.name || "You"}
           image={user?.image}
@@ -135,7 +135,7 @@ export default function ProfilePage() {
           title="Personal information"
           caption="Update your personal details"
         />
-        <div className="space-y-3.5 rounded-2xl bg-card p-3.5 ring-1 ring-foreground/[0.06]">
+        <div className="space-y-3.5 rounded-[var(--card-radius)] bg-card p-3.5 ring-1 ring-foreground/[0.06] shadow-[0_8px_24px_-20px_rgba(20,16,31,0.12)]">
           <div className="grid gap-3.5 sm:grid-cols-2">
             <div className="space-y-1.5">
               <Label htmlFor="name">Full Name</Label>
@@ -222,7 +222,7 @@ export default function ProfilePage() {
           title="Change password"
           caption="Keep your account secure"
         />
-        <div className="space-y-3.5 rounded-2xl bg-card p-3.5 ring-1 ring-foreground/[0.06]">
+        <div className="space-y-3.5 rounded-[var(--card-radius)] bg-card p-3.5 ring-1 ring-foreground/[0.06] shadow-[0_8px_24px_-20px_rgba(20,16,31,0.12)]">
           <div className="space-y-1.5">
             <Label htmlFor="currentPassword">Current Password</Label>
             <Input

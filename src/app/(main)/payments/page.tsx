@@ -90,11 +90,11 @@ export default async function PaymentsPage() {
             return (
               <TabsContent key={tab} value={tab} className="mt-2.5">
                 {filtered.length === 0 ? (
-                  <p className="rounded-2xl bg-card/60 py-8 text-center text-[0.8rem] text-muted-foreground ring-1 ring-foreground/[0.05]">
+                  <p className="rounded-[var(--card-radius)] bg-card/60 py-8 text-center text-[0.8rem] text-muted-foreground ring-1 ring-foreground/[0.05]">
                     No {tab} payments
                   </p>
                 ) : (
-                  <div className="rounded-2xl bg-card p-1.5 ring-1 ring-foreground/[0.06]">
+                  <div className="rounded-[var(--card-radius)] bg-card p-1.5 ring-1 ring-foreground/[0.06] shadow-[0_10px_26px_-20px_rgba(20,16,31,0.1)]">
                     <ListGroup>
                       {filtered.map((payment) => (
                         <ListRow

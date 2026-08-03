@@ -17,8 +17,8 @@ export function BottomNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 px-2 pb-2 pb-safe lg:hidden">
-      <div className="mx-auto flex max-w-md items-stretch justify-around gap-1 rounded-[22px] border border-border bg-card p-1.5 shadow-[0_10px_24px_-18px_rgba(15,23,42,0.35)]">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 px-2 pb-2 pt-1 pb-safe lg:hidden">
+      <div className="mx-auto flex max-w-3xl items-center justify-between gap-1 rounded-[var(--card-radius)] border border-border bg-card px-1.5 py-1.5 shadow-[0_18px_80px_-48px_rgba(15,23,42,0.28)] sm:px-2 sm:py-2 sm:gap-2">
         {NAV_ITEMS.main.map((item) => {
           const Icon = iconMap[item.icon];
           const isActive =
@@ -30,14 +30,14 @@ export function BottomNav() {
               aria-current={isActive ? "page" : undefined}
               aria-label={item.label}
               className={cn(
-                "group flex min-h-[52px] min-w-[52px] flex-1 flex-col items-center justify-center gap-1 rounded-[16px] px-1 py-1.5 text-[10px] font-semibold transition-all duration-200",
+                "group flex min-h-[50px] flex-1 flex-col items-center justify-center gap-0.5 rounded-[0.95rem] px-2 py-1.5 text-[10px] font-medium transition-all duration-200 sm:min-h-[56px] sm:gap-1 sm:px-3 sm:py-2 sm:text-[11px]",
                 isActive
-                  ? "bg-primary text-primary-foreground shadow-sm"
-                  : "text-muted-foreground hover:bg-muted"
+                  ? "bg-primary text-primary-foreground shadow-[0_8px_20px_-10px_rgba(124,58,237,0.25)]"
+                  : "text-muted-foreground hover:bg-muted/70 hover:text-foreground"
               )}
             >
-              <span className="flex h-8 w-8 items-center justify-center rounded-full">
-                {Icon && <Icon className="h-[18px] w-[18px]" />}
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-card shadow-sm sm:h-9 sm:w-9">
+                {Icon && <Icon className="h-4 w-4 sm:h-5 sm:w-5" />}
               </span>
               <span className="leading-none">{item.label}</span>
             </Link>
