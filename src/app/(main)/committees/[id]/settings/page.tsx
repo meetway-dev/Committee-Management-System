@@ -80,7 +80,6 @@ export default function CommitteeSettingsPage({ params }: PageProps) {
   } = useForm<UpdateCommitteeInput>({
     resolver: zodResolver(updateCommitteeSchema),
     defaultValues: {
-      id,
       name: committee?.name,
       description: committee?.description ?? "",
       contributionAmount: committee?.contributionAmount,
@@ -190,6 +189,23 @@ export default function CommitteeSettingsPage({ params }: PageProps) {
       toast.error("Something went wrong");
     } finally {
       setInviteLoading(false);
+    }
+  }
+
+  async function handleArchive() {
+    setArchiving(true);
+    try {
+      const result = await archiveCommittee(id);
+      if (result.success) {
+        toast.success(result.message);
+        router.push("/committees");
+      } else {
+        toast.error(result.error);
+      }
+    } catch {
+      toast.error("Something went wrong");
+    } finally {
+      setArchiving(false);
     }
   }
 
@@ -367,8 +383,15 @@ export default function CommitteeSettingsPage({ params }: PageProps) {
 
             <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
               <div className="text-sm text-muted-foreground">Save your committee settings after changes.</div>
-              <Button type="submit" loading={loading} className="min-w-[10rem]">
-                Save changes
+              <Button type="submit" disabled={loading} className="min-w-[10rem]">
+                {loading ? (
+                  <span className="inline-flex items-center gap-2">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Saving...
+                  </span>
+                ) : (
+                  "Save changes"
+                )}
               </Button>
             </div>
           </form>

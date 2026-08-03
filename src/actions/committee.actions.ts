@@ -4,7 +4,7 @@ import { auth } from "@/lib/auth";
 import { connectDB } from "@/lib/db";
 import Committee from "@/models/Committee";
 import CommitteeMember from "@/models/CommitteeMember";
-import { createCommitteeSchema } from "@/schemas/committee.schema";
+import { createCommitteeSchema, updateCommitteeSchema } from "@/schemas/committee.schema";
 import type { ApiResponse } from "@/types/api";
 import { revalidatePath } from "next/cache";
 
