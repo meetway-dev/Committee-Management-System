@@ -39,7 +39,7 @@ export function Header() {
         <DropdownMenu>
           <DropdownMenuTrigger
             aria-label="Account menu"
-            className="rounded-full outline-none ring-offset-2 focus-visible:ring-2 focus-visible:ring-ring"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card shadow-sm outline-none transition-all hover:border-primary/40 hover:shadow-md focus-visible:ring-2 focus-visible:ring-primary/30"
           >
             <GradientAvatar
               name={user?.name || "User"}

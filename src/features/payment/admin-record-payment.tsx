@@ -112,20 +112,22 @@ export function AdminRecordPayment({ committeeId, members, contributionAmount }:
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-base">
-          <CreditCard className="h-4 w-4" />
+    <Card className="border border-border bg-card shadow-[0_10px_30px_-22px_rgba(20,16,31,0.3)]">
+      <CardHeader className="pb-3">
+        <CardTitle className="flex items-center gap-2 text-base font-semibold">
+          <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary-soft text-primary">
+            <CreditCard className="h-4 w-4" />
+          </span>
           Record Payment (Admin)
         </CardTitle>
-        <CardDescription>
-          Record a manual payment for a member
-        </CardDescription>
+        <CardDescription>Record a manual payment for a member.</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="userId">Member</Label>
+            <Label htmlFor="userId" className="text-[0.78rem] font-medium text-muted-foreground">
+              Member
+            </Label>
             <Select
               value={selectedUserId || undefined}
               onValueChange={(v: string | null) => {
@@ -147,18 +149,24 @@ export function AdminRecordPayment({ committeeId, members, contributionAmount }:
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="amount">Amount</Label>
-            <Input id="amount" type="number" step="0.01" {...register("amount", { valueAsNumber: true })} />
+            <Label htmlFor="amount" className="text-[0.78rem] font-medium text-muted-foreground">
+              Amount
+            </Label>
+            <Input id="amount" type="number" step="0.01" className="h-11" {...register("amount", { valueAsNumber: true })} />
             {errors.amount && <p className="text-xs text-destructive">{errors.amount.message}</p>}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="paidDate">Payment Date</Label>
-            <Input id="paidDate" type="date" {...register("paidDate")} />
+            <Label htmlFor="paidDate" className="text-[0.78rem] font-medium text-muted-foreground">
+              Payment Date
+            </Label>
+            <Input id="paidDate" type="date" className="h-11" {...register("paidDate")} />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="paymentMethod">Payment Method</Label>
+            <Label htmlFor="paymentMethod" className="text-[0.78rem] font-medium text-muted-foreground">
+              Payment Method
+            </Label>
             <Select
               value={selectedPaymentMethod || "cash"}
               onValueChange={(v: string | null) => {
@@ -179,15 +187,20 @@ export function AdminRecordPayment({ committeeId, members, contributionAmount }:
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="notes">Notes (optional)</Label>
-            <Textarea id="notes" placeholder="Notes" {...register("notes")} rows={3} />
+            <Label htmlFor="notes" className="text-[0.78rem] font-medium text-muted-foreground">
+              Notes (optional)
+            </Label>
+            <Textarea id="notes" placeholder="Notes" className="min-h-24" {...register("notes")} rows={3} />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="proof-url">Proof URL (optional)</Label>
+            <Label htmlFor="proof-url" className="text-[0.78rem] font-medium text-muted-foreground">
+              Proof URL (optional)
+            </Label>
             <Input
               id="proof-url"
               type="url"
+              className="h-11"
               placeholder="https://example.com/payment-proof.jpg"
               value={proofUrl}
               onChange={(e) => setProofUrl(e.target.value)}
@@ -199,6 +212,7 @@ export function AdminRecordPayment({ committeeId, members, contributionAmount }:
               id="proof"
               type="file"
               accept="image/*"
+              className="block w-full rounded-xl border border-dashed border-border bg-muted/30 px-3 py-2 text-xs text-muted-foreground file:mr-3 file:rounded-lg file:border-0 file:bg-primary/10 file:px-2.5 file:py-1.5 file:text-sm file:font-medium file:text-primary"
               onChange={async (e) => {
                 const file = e.target.files?.[0];
                 if (!file) return;
@@ -218,10 +232,10 @@ export function AdminRecordPayment({ committeeId, members, contributionAmount }:
                 reader.readAsDataURL(file);
               }}
             />
-            {proofPreview && <img src={proofPreview} alt="preview" className="mt-2 max-h-40 object-contain" />}
+            {proofPreview && <img src={proofPreview} alt="preview" className="mt-2 max-h-40 rounded-xl object-contain ring-1 ring-border" />}
           </div>
 
-          <Button type="submit" disabled={submitting} className="w-full gap-2">
+          <Button type="submit" disabled={submitting} className="w-full gap-2 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90">
             {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
             Record Payment
           </Button>
