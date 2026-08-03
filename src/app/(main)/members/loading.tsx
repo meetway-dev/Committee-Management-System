@@ -1,9 +1,9 @@
-import { ListSkeleton } from "@/components/shared/loading-skeleton";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ListSkeleton } from "@/components/shared/loading-skeleton";
 
-export default function PaymentsLoading() {
+export default function MembersLoading() {
   return (
-    <>
+    <div className="space-y-4">
       <div className="flex items-center gap-2.5">
         <Skeleton className="h-9 w-9 rounded-xl" />
         <div className="space-y-1.5">
@@ -16,8 +16,10 @@ export default function PaymentsLoading() {
           <Skeleton key={i} className="h-[52px] rounded-xl" />
         ))}
       </div>
-      <Skeleton className="h-9 w-full rounded-xl" />
-      <ListSkeleton rows={5} />
-    </>
+      <Skeleton className="h-4 w-36" />
+      <ListSkeleton rows={4} />
+      <Skeleton className="h-4 w-36" />
+      <ListSkeleton rows={3} />
+    </div>
   );
 }

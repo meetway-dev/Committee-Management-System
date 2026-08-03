@@ -22,10 +22,10 @@ export default async function CommitteesPage() {
   );
 
   return (
-    <div className="space-y-6">
+    <>
       <PageHeader
-        title="Committees"
-        description="Manage your savings committees"
+        title="Circles"
+        description="Manage your savings circles"
         icon={Users}
         action={
           <Link
@@ -33,7 +33,7 @@ export default async function CommitteesPage() {
             className={cn(buttonVariants({ size: "sm" }), "gap-1.5")}
           >
             <Plus className="h-4 w-4" />
-            New Committee
+            New
           </Link>
         }
       />
@@ -41,51 +41,45 @@ export default async function CommitteesPage() {
       {committees.length === 0 ? (
         <EmptyState
           icon={Users}
-          title="No committees yet"
-          description="Create your first committee to start managing group savings and contributions."
-          actionLabel="Create Committee"
+          title="No circles yet"
+          description="Create your first circle to start managing group savings and contributions."
+          actionLabel="Create Circle"
           actionHref="/committees/new"
         />
       ) : (
-        <Tabs defaultValue="all" className="space-y-4">
-          <TabsList>
-            <TabsTrigger value="all">
-              All ({committees.length})
-            </TabsTrigger>
-            <TabsTrigger value="active">
-              Active ({active.length})
-            </TabsTrigger>
-            <TabsTrigger value="drafts">
-              Drafts ({drafts.length})
-            </TabsTrigger>
+        <Tabs defaultValue="all">
+          <TabsList className="w-full">
+            <TabsTrigger value="all">All ({committees.length})</TabsTrigger>
+            <TabsTrigger value="active">Active ({active.length})</TabsTrigger>
+            <TabsTrigger value="drafts">Drafts ({drafts.length})</TabsTrigger>
             <TabsTrigger value="completed">
-              Completed ({completed.length})
+              Done ({completed.length})
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="all">
+          <TabsContent value="all" className="mt-2.5">
             <CommitteeCardList committees={committees} />
           </TabsContent>
-          <TabsContent value="active">
+          <TabsContent value="active" className="mt-2.5">
             <CommitteeCardList
               committees={active}
-              emptyMessage="No active committees"
+              emptyMessage="No active circles"
             />
           </TabsContent>
-          <TabsContent value="drafts">
+          <TabsContent value="drafts" className="mt-2.5">
             <CommitteeCardList
               committees={drafts}
-              emptyMessage="No draft committees"
+              emptyMessage="No draft circles"
             />
           </TabsContent>
-          <TabsContent value="completed">
+          <TabsContent value="completed" className="mt-2.5">
             <CommitteeCardList
               committees={completed}
-              emptyMessage="No completed committees"
+              emptyMessage="No completed circles"
             />
           </TabsContent>
         </Tabs>
       )}
-    </div>
+    </>
   );
 }

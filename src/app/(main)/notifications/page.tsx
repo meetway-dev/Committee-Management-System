@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { Card, CardContent } from "@/components/ui/card";
 import { PageHeader } from "@/components/shared/page-header";
 import { EmptyState } from "@/components/shared/empty-state";
 import { getNotifications } from "@/actions/notification.actions";
@@ -37,15 +36,23 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   system: Info,
 };
 
-export default async function NotificationsPage() {
-  const notifications = await getNotifications();
+interface NotificationView {
+  _id: string;
+  type: string;
+  title: string;
+  body: string;
+  actionUrl?: string;
+  read: boolean;
+  createdAt: string;
+}
 
-  const unreadCount = notifications.filter(
-    (n: { read: boolean }) => !n.read
-  ).length;
+export default async function NotificationsPage() {
+  const notifications = (await getNotifications()) as NotificationView[];
+
+  const unreadCount = notifications.filter((n) => !n.read).length;
 
   return (
-    <div className="space-y-6">
+    <>
       <PageHeader
         title="Notifications"
         description={
@@ -61,78 +68,73 @@ export default async function NotificationsPage() {
         <EmptyState
           icon={Bell}
           title="No notifications"
-          description="You'll receive notifications about payment reminders, committee updates, and more."
+          description="You'll get notified about payment reminders, circle updates, and more."
         />
       ) : (
         <div className="space-y-2">
-          {notifications.map(
-            (notification: {
-              _id: string;
-              type: string;
-              title: string;
-              body: string;
-              actionUrl?: string;
-              read: boolean;
-              createdAt: string;
-            }) => {
-              const Icon = iconMap[notification.type] || Bell;
+          {notifications.map((notification) => {
+            const Icon = iconMap[notification.type] || Bell;
 
-              const content = (
-                <Card
+            const body = (
+              <div
+                className={cn(
+                  "flex items-start gap-3 rounded-2xl p-3 ring-1 transition-colors",
+                  notification.read
+                    ? "bg-card ring-foreground/[0.06]"
+                    : "bg-primary-soft ring-primary/25",
+                  notification.actionUrl && "hover:bg-muted/60 active:bg-muted"
+                )}
+              >
+                <div
                   className={cn(
-                    "transition-all hover:shadow-sm",
-                    !notification.read && "border-primary/20 bg-primary/5"
+                    "flex h-9 w-9 shrink-0 items-center justify-center rounded-xl",
+                    notification.read
+                      ? "bg-muted text-muted-foreground"
+                      : "bg-primary text-primary-foreground"
                   )}
                 >
-                  <CardContent className="flex items-start gap-3 p-4">
-                    <div
+                  <Icon className="h-4 w-4" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-start justify-between gap-2">
+                    <p
                       className={cn(
-                        "mt-0.5 rounded-lg p-2",
-                        !notification.read
-                          ? "bg-primary/10 text-primary"
-                          : "bg-muted text-muted-foreground"
+                        "text-[0.8rem] leading-tight",
+                        notification.read ? "font-medium" : "font-bold"
                       )}
                     >
-                      <Icon className="h-4 w-4" />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-start justify-between gap-2">
-                        <p
-                          className={cn(
-                            "text-sm",
-                            !notification.read ? "font-semibold" : "font-medium"
-                          )}
-                        >
-                          {notification.title}
-                        </p>
-                        <span className="shrink-0 text-xs text-muted-foreground">
-                          {formatRelativeDate(notification.createdAt)}
-                        </span>
-                      </div>
-                      <p className="mt-0.5 text-xs text-muted-foreground line-clamp-2">
-                        {notification.body}
-                      </p>
-                    </div>
-                    {!notification.read && (
-                      <div className="mt-2 h-2 w-2 shrink-0 rounded-full bg-primary" />
-                    )}
-                  </CardContent>
-                </Card>
+                      {notification.title}
+                    </p>
+                    <span className="shrink-0 text-[10px] text-muted-foreground">
+                      {formatRelativeDate(notification.createdAt)}
+                    </span>
+                  </div>
+                  <p className="mt-1 line-clamp-2 text-[11px] leading-relaxed text-muted-foreground">
+                    {notification.body}
+                  </p>
+                </div>
+                {!notification.read && (
+                  <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-primary" />
+                )}
+              </div>
+            );
+
+            if (notification.actionUrl) {
+              return (
+                <Link
+                  key={notification._id}
+                  href={notification.actionUrl}
+                  className="block"
+                >
+                  {body}
+                </Link>
               );
-
-              if (notification.actionUrl) {
-                return (
-                  <Link key={notification._id} href={notification.actionUrl}>
-                    {content}
-                  </Link>
-                );
-              }
-
-              return <div key={notification._id}>{content}</div>;
             }
-          )}
+
+            return <div key={notification._id}>{body}</div>;
+          })}
         </div>
       )}
-    </div>
+    </>
   );
 }

@@ -59,15 +59,16 @@ export const COUNTRIES = [
 export const NAV_ITEMS = {
   main: [
     { href: "/dashboard", label: "Home", icon: "Home" },
-    { href: "/committees", label: "Committees", icon: "Users" },
+    { href: "/committees", label: "Circles", icon: "Users" },
     { href: "/payments", label: "Payments", icon: "CreditCard" },
-    { href: "/notifications", label: "Notifications", icon: "Bell" },
+    { href: "/members", label: "Members", icon: "UsersRound" },
     { href: "/profile", label: "Profile", icon: "User" },
   ],
   sidebar: [
     { href: "/dashboard", label: "Dashboard", icon: "LayoutDashboard" },
-    { href: "/committees", label: "Committees", icon: "Users" },
+    { href: "/committees", label: "Circles", icon: "Users" },
     { href: "/payments", label: "Payments", icon: "CreditCard" },
+    { href: "/members", label: "Members", icon: "UsersRound" },
     { href: "/notifications", label: "Notifications", icon: "Bell" },
     { href: "/profile", label: "Profile", icon: "UserCircle" },
     { href: "/settings", label: "Settings", icon: "Settings" },
@@ -79,3 +80,11 @@ export const NAV_ITEMS = {
     { href: "/admin/support", label: "Support", icon: "LifeBuoy" },
   ],
 } as const;
+
+export const QUICK_ACTIONS = [
+  { label: "Pay", href: "/payments", icon: "Wallet" },
+  { label: "Members", href: "/members", icon: "UsersRound" },
+  { label: "Create", href: "/committees/new", icon: "Plus" },
+  { label: "Invite", href: "/committees", icon: "UserPlus" },
+  { label: "History", href: "/payments", icon: "History" },
+] as const;

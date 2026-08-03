@@ -135,7 +135,7 @@ export default function InviteMemberPage({ params }: PageProps) {
           <CardContent className="space-y-6">
             <div className="rounded-2xl border border-muted/20 bg-muted/5 p-4">
               <p className="text-sm font-medium text-muted-foreground">
-                Enter the member's email and choose an action. If the user has an account, use "Add Member"; otherwise use "Send Invite".
+                Enter the member&apos;s email and choose an action. If the user has an account, use &quot;Add Member&quot;; otherwise use &quot;Send Invite&quot;.
               </p>
               <div className="mt-4 space-y-4">
                 <Label htmlFor="email">Email Address</Label>

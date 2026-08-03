@@ -33,6 +33,57 @@ export async function getCommitteeMembers(committeeId: string) {
   }
 }
 
+/**
+ * Read-only: every member of every committee the current user belongs to,
+ * grouped client-side by committee. Used by the /members directory.
+ */
+export async function getAllMyMembers() {
+  try {
+    const session = await auth();
+    if (!session?.user) return [];
+
+    await connectDB();
+
+    const myMemberships = await CommitteeMember.find({
+      user: session.user.id,
+      status: "active",
+    }).select("committee");
+
+    const committeeIds = myMemberships.map((m) => m.committee);
+    if (committeeIds.length === 0) return [];
+
+    const committees = await Committee.find({
+      _id: { $in: committeeIds },
+      deletedAt: null,
+    })
+      .select("name currency contributionAmount status")
+      .lean();
+
+    const members = await CommitteeMember.find({
+      committee: { $in: committees.map((c) => c._id) },
+      status: { $ne: "removed" },
+    })
+      .populate("user", "name email image")
+      .sort({ turnNumber: 1 })
+      .lean();
+
+    const grouped = committees.map((committee) => ({
+      committee: JSON.parse(JSON.stringify(committee)),
+      members: JSON.parse(
+        JSON.stringify(
+          members.filter(
+            (m) => m.committee.toString() === committee._id.toString()
+          )
+        )
+      ),
+    }));
+
+    return JSON.parse(JSON.stringify(grouped));
+  } catch {
+    return [];
+  }
+}
+
 export async function setCommitteeTurnOrder(
   committeeId: string,
   memberIds: string[]
