@@ -1,22 +1,108 @@
-import { getCommitteeById } from "@/actions/committee.actions";
-import { getCommitteeMembers } from "@/actions/member.actions";
-import SettingsForm from "./SettingsForm";
-import { notFound } from "next/navigation";
+"use client";
 
-interface PageProps {
-  params: { id: string };
+import { archiveCommittee, updateCommittee } from "@/actions/committee.actions";
+import {
+  addCommitteeMember,
+  getCommitteeMembers,
+  inviteMember,
+} from "@/actions/member.actions";
+import { ConfirmDialog } from "@/components/shared/confirm-dialog";
+import { GradientAvatar } from "@/components/shared/gradient-avatar";
+import { PageHeader } from "@/components/shared/page-header";
+import { SectionHeader } from "@/components/shared/section-header";
+import { ListGroup, ListRow } from "@/components/shared/list-row";
+import { MemberRemoveButton } from "@/features/member/member-remove-button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
+import { inviteMemberSchema, type InviteMemberInput } from "@/schemas/member.schema";
+import { updateCommitteeSchema, type UpdateCommitteeInput } from "@/schemas/committee.schema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  Archive,
+  ArrowLeft,
+  CheckCircle2,
+  Copy,
+  Settings,
+  UserPlus,
+  Loader2,
+} from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import type { ICommittee } from "@/types/committee";
+
+interface CommitteeSettings extends Omit<ICommittee, "startDate" | "createdAt" | "updatedAt"> {
+  startDate?: string;
+  createdAt: string;
+  updatedAt: string;
+  userRole?: string;
 }
 
-export default async function CommitteeSettingsPage({ params }: PageProps) {
-  const { id } = params;
-  const committee = await getCommitteeById(id);
-  const members = await getCommitteeMembers(id);
+interface MemberListItem {
+  _id: string;
+  user?: { _id: string; name?: string; email?: string; image?: string };
+  role: string;
+  turnNumber: number;
+  totalPaid: number;
+  status: string;
+}
 
-  if (!committee) {
-    notFound();
-  }
+interface SettingsFormProps {
+  committee: CommitteeSettings;
+  members: MemberListItem[];
+  committeeId: string;
+}
 
-  return <SettingsForm committee={committee} members={members} committeeId={id} />;
+export default function SettingsForm({ committee, members, committeeId }: SettingsFormProps) {
+  const router = useRouter();
+  const [archiving, setArchiving] = useState(false);
+  const [showArchive, setShowArchive] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm<UpdateCommitteeInput>({
+    resolver: zodResolver(updateCommitteeSchema),
+    defaultValues: {
+      name: committee.name,
+      description: committee.description ?? "",
+      contributionAmount: committee.contributionAmount,
+      currency: committee.currency,
+      frequency: committee.frequency,
+      maxMembers: committee.maxMembers,
+      minMembers: committee.minMembers,
+      startDate: committee.startDate,
+      paymentDueDay: committee.paymentDueDay,
+      gracePeriodDays: committee.gracePeriodDays,
+      visibility: committee.visibility,
+      turnMode: committee.turnMode,
+      rules: committee.rules ?? "",
+    },
+  });
 
   const {
     register: registerInvite,
@@ -26,7 +112,7 @@ export default async function CommitteeSettingsPage({ params }: PageProps) {
   } = useForm<InviteMemberInput>({
     resolver: zodResolver(inviteMemberSchema),
     defaultValues: {
-      committeeId: id,
+      committeeId,
       method: "email",
     },
   });
@@ -36,9 +122,10 @@ export default async function CommitteeSettingsPage({ params }: PageProps) {
   const [emailSent, setEmailSent] = useState<boolean | null>(null);
   const [copied, setCopied] = useState(false);
 
-  if (!committee) {
-    return <div>Committee not found.</div>;
-  }
+  const currencyValue = watch("currency") ?? committee.currency;
+  const frequencyValue = watch("frequency") ?? committee.frequency;
+  const turnModeValue = watch("turnMode") ?? committee.turnMode;
+  const visibilityValue = watch("visibility") ?? committee.visibility;
 
   async function onSubmit(data: UpdateCommitteeInput) {
     setLoading(true);
@@ -49,7 +136,7 @@ export default async function CommitteeSettingsPage({ params }: PageProps) {
           formData.append(key, String(value));
         }
       });
-      formData.append("id", id);
+      formData.append("id", committeeId);
 
       const result = await updateCommittee(formData);
       if (result.success) {
@@ -72,7 +159,7 @@ export default async function CommitteeSettingsPage({ params }: PageProps) {
     setEmailSent(null);
 
     try {
-      const result = await inviteMember(id, data.email);
+      const result = await inviteMember(committeeId, data.email);
       if (result.success && result.data) {
         const link =
           result.data.link ||
@@ -99,7 +186,7 @@ export default async function CommitteeSettingsPage({ params }: PageProps) {
     setEmailSent(null);
 
     try {
-      const result = await addCommitteeMember(id, data.email);
+      const result = await addCommitteeMember(committeeId, data.email);
       if (result.success) {
         toast.success(result.message);
         resetInvite();
@@ -117,7 +204,7 @@ export default async function CommitteeSettingsPage({ params }: PageProps) {
   async function handleArchive() {
     setArchiving(true);
     try {
-      const result = await archiveCommittee(id);
+      const result = await archiveCommittee(committeeId);
       if (result.success) {
         toast.success(result.message);
         router.push("/committees");
@@ -151,7 +238,7 @@ export default async function CommitteeSettingsPage({ params }: PageProps) {
         icon={Settings}
         action={
           <Link
-            href={`/committees/${id}`}
+            href={`/committees/${committeeId}`}
             className={cn(
               buttonVariants({ variant: "ghost", size: "sm" }),
               "gap-1.5"
@@ -413,16 +500,16 @@ export default async function CommitteeSettingsPage({ params }: PageProps) {
                 <div className="space-y-4">
                   <SectionHeader
                     title="Current members"
-                    caption={`${memberList.length} of ${committee.maxMembers} seats filled`}
+                    caption={`${members.length} of ${committee.maxMembers} seats filled`}
                   />
-                  {memberList.length === 0 ? (
+                  {members.length === 0 ? (
                     <div className="rounded-2xl bg-card/60 p-6 text-center text-[0.8rem] text-muted-foreground ring-1 ring-foreground/[0.05]">
                       No members yet. Invite your first member to get started.
                     </div>
                   ) : (
                     <div className="rounded-2xl bg-card p-1.5 ring-1 ring-foreground/[0.06]">
                       <ListGroup>
-                        {memberList.map((member) => (
+                        {members.map((member) => (
                           <ListRow
                             key={member._id}
                             leading={
@@ -438,14 +525,13 @@ export default async function CommitteeSettingsPage({ params }: PageProps) {
                                 <span>{member.user.email}</span>
                               ) : (
                                 "No email"
-                              )
-                            }
+                              )}
                             value={`Turn ${member.turnNumber}`}
                             valueCaption={member.role === "admin" ? "Admin" : "Member"}
                             trailing={
                               member.role !== "admin" ? (
                                 <MemberRemoveButton
-                                  committeeId={id}
+                                  committeeId={committeeId}
                                   memberId={member._id}
                                   memberName={member.user?.name || "this member"}
                                 />
