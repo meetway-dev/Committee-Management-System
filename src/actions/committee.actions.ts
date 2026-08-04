@@ -101,7 +101,21 @@ export async function getMyCommittees() {
       .sort({ updatedAt: -1 })
       .lean();
 
-    return JSON.parse(JSON.stringify(committees));
+    const memberCounts = await CommitteeMember.aggregate([
+      { $match: { committee: { $in: committeeIds }, status: "active" } },
+      { $group: { _id: "$committee", count: { $sum: 1 } } },
+    ]);
+
+    const memberCountByCommittee = new Map(
+      memberCounts.map((item) => [item._id.toString(), item.count])
+    );
+
+    const committeesWithMemberCount = committees.map((committee) => ({
+      ...committee,
+      memberCount: memberCountByCommittee.get(committee._id.toString()) || 0,
+    }));
+
+    return JSON.parse(JSON.stringify(committeesWithMemberCount));
   } catch {
     return [];
   }

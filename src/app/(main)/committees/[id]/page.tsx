@@ -286,7 +286,7 @@ export default async function CommitteeDetailPage({ params }: PageProps) {
         <TabsContent value="members" className="mt-2.5 space-y-2">
           <SectionHeader
             title="Members"
-            caption={`${memberList.length} of ${committee.maxMembers} seats filled`}
+            caption={`${memberList.length} assigned member${memberList.length === 1 ? "" : "s"}`}
             action={
               isAdmin ? (
                 <Link
@@ -439,7 +439,7 @@ export default async function CommitteeDetailPage({ params }: PageProps) {
         <TabsContent value="turns" className="mt-2.5 space-y-2">
           <SectionHeader
             title="Turn schedule"
-            caption="Payout order for all members"
+            caption={`Payout order for ${memberList.length} assigned member${memberList.length === 1 ? "" : "s"}`}
           />
           {memberList.length === 0 ? (
             <EmptyState

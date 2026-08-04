@@ -16,12 +16,12 @@ interface CommitteeCardProps {
 }
 
 export function CommitteeCard({ committee }: CommitteeCardProps) {
-  const progress =
-    committee.totalRounds > 0
-      ? Math.round((committee.currentRound / committee.totalRounds) * 100)
-      : 0;
+  const activeMemberCount = committee.memberCount ?? committee.totalRounds;
+  const progress = activeMemberCount > 0
+    ? Math.round((committee.currentRound / activeMemberCount) * 100)
+    : 0;
 
-  const members = committee.memberCount ?? committee.maxMembers;
+  const members = committee.memberCount ?? 0;
 
   return (
     <Link
@@ -42,11 +42,15 @@ export function CommitteeCard({ committee }: CommitteeCardProps) {
         <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground/50" />
       </div>
 
-      {committee.status === "active" && committee.totalRounds > 0 && (
+      <p className="line-clamp-2 text-[0.8rem] text-muted-foreground">
+        {committee.description || "No description"}
+      </p>
+
+      {committee.status === "active" && activeMemberCount > 0 && (
         <div>
           <div className="flex items-center justify-between text-[10px] font-medium text-muted-foreground">
             <span>
-              Round {committee.currentRound}/{committee.totalRounds}
+              Round {committee.currentRound}/{activeMemberCount}
             </span>
             <span className="font-bold text-primary tabular">{progress}%</span>
           </div>
