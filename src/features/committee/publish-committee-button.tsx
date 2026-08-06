@@ -3,6 +3,7 @@
 import { publishCommittee } from "@/actions/committee.actions";
 import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { CheckCircle2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -10,9 +11,13 @@ import { toast } from "sonner";
 
 interface PublishCommitteeButtonProps {
   committeeId: string;
+  className?: string;
 }
 
-export function PublishCommitteeButton({ committeeId }: PublishCommitteeButtonProps) {
+export function PublishCommitteeButton({
+  committeeId,
+  className,
+}: PublishCommitteeButtonProps) {
   const router = useRouter();
   const [showConfirm, setShowConfirm] = useState(false);
   const [publishing, setPublishing] = useState(false);
@@ -41,7 +46,7 @@ export function PublishCommitteeButton({ committeeId }: PublishCommitteeButtonPr
         variant="secondary"
         size="sm"
         onClick={() => setShowConfirm(true)}
-        className="gap-1.5"
+        className={cn("gap-1.5", className)}
       >
         <CheckCircle2 className="h-4 w-4" />
         Publish

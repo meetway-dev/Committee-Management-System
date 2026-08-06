@@ -146,6 +146,12 @@ export default async function CommitteeDetailPage({ params }: PageProps) {
               {committee.description || "No description"}
             </p>
           </div>
+          {committee.status === "draft" && isAdmin && (
+            <PublishCommitteeButton
+              committeeId={id}
+              className="mt-0.5 shrink-0"
+            />
+          )}
         </div>
       </div>
 
@@ -196,22 +202,6 @@ export default async function CommitteeDetailPage({ params }: PageProps) {
               value={committee.frequency}
             />
           </div>
-
-          {committee.status === "draft" && isAdmin && (
-            <div className="rounded-2xl bg-amber-50 p-3.5 ring-1 ring-amber-200/70 dark:bg-amber-950/30 dark:ring-amber-900/50">
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <div className="min-w-0">
-                  <p className="text-[0.8rem] font-semibold text-amber-900 dark:text-amber-200">
-                    Draft circle
-                  </p>
-                  <p className="mt-0.5 text-[11px] text-amber-800/80 dark:text-amber-300/80">
-                    Publish this circle before members can contribute.
-                  </p>
-                </div>
-                <PublishCommitteeButton committeeId={id} />
-              </div>
-            </div>
-          )}
 
           {committee.status === "active" && (
             <div className="rounded-[var(--card-radius)] bg-card p-3.5 ring-1 ring-foreground/[0.06] shadow-[0_10px_26px_-20px_rgba(20,16,31,0.1)]">
