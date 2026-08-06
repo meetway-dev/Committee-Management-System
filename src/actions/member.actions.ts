@@ -1,6 +1,6 @@
 "use server";
 
-import { getBaseUrl } from "@/lib/app-url";
+import { getPublicUrl } from "@/lib/public-url";
 import { auth } from "@/lib/auth";
 import { connectDB } from "@/lib/db";
 import { sendInvitationEmail } from "@/lib/email";
@@ -232,7 +232,7 @@ export async function inviteMember(
       expiresAt,
     });
 
-    const inviteUrl = await getBaseUrl(`/invite?token=${token}`);
+    const inviteUrl = getPublicUrl(`/invite?token=${token}`);
     const emailSent = await sendInvitationEmail(email, inviteUrl, committee.name || "Committee");
 
     revalidatePath(`/committees/${committeeId}`);

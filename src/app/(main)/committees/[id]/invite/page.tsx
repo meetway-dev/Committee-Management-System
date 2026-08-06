@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
+import { getPublicUrl } from "@/lib/public-url";
 import {
     inviteMemberSchema,
     manualMemberSchema,
@@ -72,7 +73,7 @@ export default function InviteMemberPage({ params }: PageProps) {
       if (result.success && result.data) {
         const link =
           result.data.link ||
-          `${window.location.origin}/invite?token=${result.data.token}`;
+          getPublicUrl(`/invite?token=${result.data.token}`);
         setInviteLink(link);
         setEmailSent(result.data.emailSent ?? null);
         toast.success(result.message);

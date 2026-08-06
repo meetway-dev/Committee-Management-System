@@ -32,6 +32,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import { getPublicUrl } from "@/lib/public-url";
 import { inviteMemberSchema, type InviteMemberInput } from "@/schemas/member.schema";
 import { updateCommitteeSchema, type UpdateCommitteeInput } from "@/schemas/committee.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -163,7 +164,7 @@ export default function SettingsForm({ committee, members, committeeId }: Settin
       if (result.success && result.data) {
         const link =
           result.data.link ||
-          `${window.location.origin}/invite?token=${result.data.token}`;
+          getPublicUrl(`/invite?token=${result.data.token}`);
         setInviteLink(link);
         setEmailSent(result.data.emailSent ?? null);
         toast.success(result.message);
