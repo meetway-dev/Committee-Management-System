@@ -4,6 +4,7 @@ import { BalanceHero } from "@/components/shared/balance-hero";
 import { Countdown } from "@/components/shared/countdown";
 import { EmptyState } from "@/components/shared/empty-state";
 import { GradientAvatar } from "@/components/shared/gradient-avatar";
+import { InstallAppBanner } from "@/components/shared/install-app";
 import { ListGroup, ListRow } from "@/components/shared/list-row";
 import { MiniChart } from "@/components/shared/mini-chart";
 import { QuickActions } from "@/components/shared/quick-actions";
@@ -181,6 +182,8 @@ export default async function DashboardPage() {
           <span className="sm:hidden">New</span>
         </Link>
       </div>
+
+      <InstallAppBanner />
 
       <BalanceHero
         label="Total saved"

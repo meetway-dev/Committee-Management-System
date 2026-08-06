@@ -30,7 +30,21 @@ export const metadata: Metadata = {
     "BachatZone is a modern committee savings management platform. Create, manage, and track your ROSCA/Chit Fund committees with ease.",
   manifest: "/manifest.json",
   icons: {
-    icon: "/favicon.ico",
+    icon: [
+      { url: "/icons/icon-192x192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icons/icon-512x512.png", sizes: "512x512", type: "image/png" },
+      { url: "/icons/icon-maskable-192x192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icons/icon-maskable-512x512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: "/icons/apple-touch-icon.png",
+  },
+  appleWebApp: {
+    capable: true,
+    title: "BachatZone",
+    statusBarStyle: "default",
+  },
+  formatDetection: {
+    telephone: false,
   },
 };
 
@@ -39,8 +53,8 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
+    { media: "(prefers-color-scheme: light)", color: "#7c3aed" },
+    { media: "(prefers-color-scheme: dark)", color: "#0f0b16" },
   ],
 };
 
@@ -60,7 +74,7 @@ export default function RootLayout({
           <ThemeProvider>
             {children}
             <Toaster position="top-center" richColors closeButton />
-            {process.env.NODE_ENV === "production" && <ServiceWorkerRegistration />}
+            <ServiceWorkerRegistration />
           </ThemeProvider>
         </AuthProvider>
       </body>

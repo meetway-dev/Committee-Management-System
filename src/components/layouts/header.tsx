@@ -2,6 +2,7 @@
 
 import { logoutUser } from "@/actions/auth.actions";
 import { GradientAvatar } from "@/components/shared/gradient-avatar";
+import { InstallAppMenuItem } from "@/components/shared/install-app";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -65,6 +66,7 @@ export function Header() {
               <Settings className="h-4 w-4" />
               Settings
             </DropdownMenuItem>
+            <InstallAppMenuItem />
             <DropdownMenuSeparator />
             <DropdownMenuItem className="p-0">
               <form action={logoutUser} className="w-full">
