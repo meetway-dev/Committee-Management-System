@@ -195,7 +195,9 @@ export async function inviteMember(
       return { success: false, error: "Committee is full" };
     }
 
-    const existingUser = await User.findOne({ email });
+    const normalizedEmail = email.trim().toLowerCase();
+
+    const existingUser = await User.findOne({ email: normalizedEmail });
     if (existingUser) {
       const existingMember = await CommitteeMember.findOne({
         committee: committeeId,
@@ -209,7 +211,7 @@ export async function inviteMember(
 
     const existingInvite = await Invitation.findOne({
       committee: committeeId,
-      email,
+      email: normalizedEmail,
       status: "pending",
     });
 
@@ -223,7 +225,7 @@ export async function inviteMember(
     await Invitation.create({
       committee: committeeId,
       invitedBy: session.user.id,
-      email,
+      email: normalizedEmail,
       token,
       method: "email",
       status: "pending",

@@ -1,7 +1,10 @@
-const CACHE_NAME = "committies-v1";
-const STATIC_ASSETS = [
-  "/manifest.json"
-];
+const CACHE_NAME = "committies-v2";
+const PRECACHE_ASSETS = ["/manifest.json"];
+
+// Only cache fingerprinted static assets. HTML navigations can contain
+// authenticated, user-specific data and must never be cached or served
+// from the cache (that would leak one user's pages to another user).
+const SAFE_ASSET = /\.(?:css|js|woff2?|ttf|otf|eot|png|jpe?g|svg|webp|gif|ico)$/i;
 
 const IS_LOCALHOST = self.location && (
   self.location.hostname === "localhost" ||
@@ -12,7 +15,7 @@ const IS_LOCALHOST = self.location && (
 if (!IS_LOCALHOST) {
   self.addEventListener("install", (event) => {
     event.waitUntil(
-      caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_ASSETS).then(() => self.skipWaiting()))
+      caches.open(CACHE_NAME).then((cache) => cache.addAll(PRECACHE_ASSETS).then(() => self.skipWaiting()))
     );
   });
 
@@ -34,12 +37,21 @@ if (!IS_LOCALHOST) {
     const url = new URL(event.request.url);
 
     if (url.origin !== self.location.origin) return;
+
+    // Never intercept page navigations. The response is HTML that may
+    // contain private per-user data.
+    if (event.request.mode === "navigate") return;
+
+    // Never intercept API or auth endpoints.
     if (url.pathname.startsWith("/api/")) return;
+
+    // Only cache safe static assets (e.g. Next.js hashed build files).
+    if (!SAFE_ASSET.test(url.pathname)) return;
 
     event.respondWith(
       caches.match(event.request).then((cached) => {
         const fetched = fetch(event.request).then((response) => {
-          if (response && response.status === 200 && response.type === "basic") {
+          if (response && response.ok && response.type === "basic") {
             const clone = response.clone();
             caches.open(CACHE_NAME).then((cache) => {
               cache.put(event.request, clone);

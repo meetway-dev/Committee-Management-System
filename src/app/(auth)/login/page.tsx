@@ -68,7 +68,7 @@ function LoginContent() {
           ? String((result.data as { redirectTo?: string }).redirectTo)
           : "/dashboard";
         toast.success("Logged in successfully");
-        router.push(redirectTo);
+        window.location.assign(redirectTo);
       } else {
         toast.error(result.error || "Login failed");
       }
@@ -89,6 +89,7 @@ function LoginContent() {
               id="email"
               type="email"
               placeholder="you@example.com"
+              autoComplete="email"
               {...register("email")}
             />
             {errors.email && (
@@ -111,6 +112,7 @@ function LoginContent() {
                 id="password"
                 type={showPassword ? "text" : "password"}
                 placeholder="••••••••"
+                autoComplete="current-password"
                 {...register("password")}
               />
               <button

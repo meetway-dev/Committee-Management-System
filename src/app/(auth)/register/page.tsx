@@ -6,6 +6,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { COUNTRIES } from "@/constants";
 import { registerSchema, type RegisterInput } from "@/schemas/auth.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -24,6 +31,8 @@ export default function RegisterPage() {
   const {
     register: reg,
     handleSubmit,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm<RegisterInput>({
     resolver: zodResolver(registerSchema),
@@ -38,6 +47,8 @@ export default function RegisterPage() {
       city: "",
     },
   });
+
+  const countryValue = watch("country") ?? "";
 
   function onSubmit(data: RegisterInput) {
     startTransition(async () => {
@@ -65,7 +76,7 @@ export default function RegisterPage() {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="name">Full Name</Label>
-            <Input id="name" placeholder="Your full name" {...reg("name")} />
+            <Input id="name" placeholder="Your full name" autoComplete="name" {...reg("name")} />
             {errors.name && (
               <p className="text-sm text-destructive">{errors.name.message}</p>
             )}
@@ -73,7 +84,7 @@ export default function RegisterPage() {
 
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" placeholder="you@example.com" {...reg("email")} />
+            <Input id="email" type="email" placeholder="you@example.com" autoComplete="email" {...reg("email")} />
             {errors.email && (
               <p className="text-sm text-destructive">{errors.email.message}</p>
             )}
@@ -87,6 +98,7 @@ export default function RegisterPage() {
                   id="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
+                  autoComplete="new-password"
                   {...reg("password")}
                 />
                 <button
@@ -108,6 +120,7 @@ export default function RegisterPage() {
                 id="confirmPassword"
                 type="password"
                 placeholder="••••••••"
+                autoComplete="new-password"
                 {...reg("confirmPassword")}
               />
               {errors.confirmPassword && (
@@ -119,33 +132,36 @@ export default function RegisterPage() {
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="phone">Phone (Optional)</Label>
-              <Input id="phone" type="tel" placeholder="+92 300 1234567" {...reg("phone")} />
+              <Input id="phone" type="tel" placeholder="+92 300 1234567" autoComplete="tel" {...reg("phone")} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="whatsapp">WhatsApp (Optional)</Label>
-              <Input id="whatsapp" type="tel" placeholder="+92 300 1234567" {...reg("whatsapp")} />
+              <Input id="whatsapp" type="tel" placeholder="+92 300 1234567" autoComplete="tel" {...reg("whatsapp")} />
             </div>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="country">Country (Optional)</Label>
-              <select
-                id="country"
-                {...reg("country")}
-                className="flex h-9 w-full rounded-lg border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              <Select
+                value={countryValue}
+                onValueChange={(value) => setValue("country", value ?? "")}
               >
-                <option value="">Select country</option>
-                {COUNTRIES.map((country) => (
-                  <option key={country} value={country}>
-                    {country}
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger className="w-full" id="country">
+                  <SelectValue placeholder="Select country" />
+                </SelectTrigger>
+                <SelectContent>
+                  {COUNTRIES.map((country) => (
+                    <SelectItem key={country} value={country}>
+                      {country}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div className="space-y-2">
               <Label htmlFor="city">City (Optional)</Label>
-              <Input id="city" placeholder="Your city" {...reg("city")} />
+              <Input id="city" placeholder="Your city" autoComplete="address-level2" {...reg("city")} />
             </div>
           </div>
 

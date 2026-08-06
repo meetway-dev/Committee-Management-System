@@ -29,10 +29,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
 
+        const email = String(credentials.email).trim().toLowerCase();
+
         await connectDB();
 
         const user = await User.findOne({
-          email: credentials.email,
+          email,
           status: "active",
         }).select("+password");
 
