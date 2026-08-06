@@ -157,14 +157,140 @@ export default async function CommitteeDetailPage({ params }: PageProps) {
         </div>
       )}
 
-      <Tabs defaultValue="members">
+      <Tabs defaultValue="overview">
         <TabsList className="w-full">
+          <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="members">Members ({memberList.length})</TabsTrigger>
           <TabsTrigger value="payments">
             Payments ({paymentList.length})
           </TabsTrigger>
           <TabsTrigger value="turns">Turns</TabsTrigger>
         </TabsList>
+
+        {/* Overview */}
+        <TabsContent value="overview" className="mt-2.5 space-y-3">
+          {/* Key numbers — value-first pills */}
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+            <StatPill
+              icon={Wallet}
+              label="Contribution"
+              value={formatCurrency(
+                committee.contributionAmount,
+                committee.currency
+              )}
+              tone="primary"
+            />
+            <StatPill
+              icon={TrendingUp}
+              label="Pool"
+              value={formatCurrency(poolAmount, committee.currency)}
+              tone="success"
+            />
+            <StatPill
+              icon={Users}
+              label="Members"
+              value={assignedMembersLabel}
+              tone="warning"
+            />
+            <StatPill
+              icon={Clock}
+              label="Frequency"
+              value={committee.frequency}
+            />
+          </div>
+
+          {committee.status === "draft" && isAdmin && (
+            <div className="rounded-2xl bg-amber-50 p-3.5 ring-1 ring-amber-200/70 dark:bg-amber-950/30 dark:ring-amber-900/50">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="min-w-0">
+                  <p className="text-[0.8rem] font-semibold text-amber-900 dark:text-amber-200">
+                    Draft circle
+                  </p>
+                  <p className="mt-0.5 text-[11px] text-amber-800/80 dark:text-amber-300/80">
+                    Publish this circle before members can contribute.
+                  </p>
+                </div>
+                <PublishCommitteeButton committeeId={id} />
+              </div>
+            </div>
+          )}
+
+          {committee.status === "draft" &&
+            committee.turnMode === "fixed" &&
+            isAdmin && (
+              <DraftTurnOrderManager committeeId={id} members={members} />
+            )}
+
+          {committee.status === "active" && (
+            <div className="rounded-[var(--card-radius)] bg-card p-3.5 ring-1 ring-foreground/[0.06] shadow-[0_10px_26px_-20px_rgba(20,16,31,0.1)]">
+              <div className="flex items-baseline justify-between">
+                <p className="text-[0.8rem] font-semibold">
+                  Round {committee.currentRound}
+                  <span className="text-muted-foreground">
+                    {" "}
+                    of {committee.totalRounds}
+                  </span>
+                </p>
+                <p className="font-heading text-lg font-bold tabular text-primary">
+                  {progress}%
+                </p>
+              </div>
+              <Progress value={progress} className="mt-2 h-1.5" />
+            </div>
+          )}
+
+          <div className="rounded-2xl bg-card px-3.5 ring-1 ring-foreground/[0.06]">
+            <div className="divide-y divide-border/60">
+              {committee.admin && typeof committee.admin === "object" && (
+                <SpecRow label="Created by">
+                  <div className="flex items-center justify-end gap-1.5">
+                    <GradientAvatar
+                      name={committee.admin.name || "Admin"}
+                      image={committee.admin.image}
+                      size="xs"
+                    />
+                    <span>{committee.admin.name}</span>
+                  </div>
+                </SpecRow>
+              )}
+              <SpecRow label="Visibility">{committee.visibility}</SpecRow>
+              <SpecRow label="Turn order">
+                {committee.turnMode || "random"}
+              </SpecRow>
+              <SpecRow label="Payment due">
+                {committee.paymentDueDay}
+                {ordinal(committee.paymentDueDay)} of each period
+              </SpecRow>
+              {committee.gracePeriodDays > 0 && (
+                <SpecRow label="Grace period">
+                  {committee.gracePeriodDays} days
+                </SpecRow>
+              )}
+              {committee.startDate && (
+                <SpecRow label="Start date">
+                  {formatDate(committee.startDate)}
+                </SpecRow>
+              )}
+              <SpecRow label="Created">{formatDate(committee.createdAt)}</SpecRow>
+            </div>
+          </div>
+
+          {committee.rules && (
+            <div className="space-y-2">
+              <SectionHeader title="Circle rules" />
+              <div className="rounded-2xl bg-card p-3.5 ring-1 ring-foreground/[0.06]">
+                <div className="flex gap-2.5">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-primary-soft text-primary">
+                    <Shield className="h-4 w-4" />
+                  </div>
+                  <p className="whitespace-pre-wrap text-[0.8rem] leading-relaxed text-muted-foreground">
+                    {committee.rules}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+        </TabsContent>
 
         {/* Members */}
         <TabsContent value="members" className="mt-2.5 space-y-2">
@@ -391,129 +517,6 @@ export default async function CommitteeDetailPage({ params }: PageProps) {
           )}
         </TabsContent>
       </Tabs>
-
-      {/* Overview — always visible, no tab */}
-      <div className="space-y-3">
-        <SectionHeader title="Overview" />
-
-        {/* Key numbers — value-first pills */}
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-          <StatPill
-            icon={Wallet}
-            label="Contribution"
-            value={formatCurrency(
-              committee.contributionAmount,
-              committee.currency
-            )}
-            tone="primary"
-          />
-          <StatPill
-            icon={TrendingUp}
-            label="Pool"
-            value={formatCurrency(poolAmount, committee.currency)}
-            tone="success"
-          />
-          <StatPill
-            icon={Users}
-            label="Members"
-            value={assignedMembersLabel}
-            tone="warning"
-          />
-          <StatPill icon={Clock} label="Frequency" value={committee.frequency} />
-        </div>
-
-        {committee.status === "draft" && isAdmin && (
-          <div className="rounded-2xl bg-amber-50 p-3.5 ring-1 ring-amber-200/70 dark:bg-amber-950/30 dark:ring-amber-900/50">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <div className="min-w-0">
-                <p className="text-[0.8rem] font-semibold text-amber-900 dark:text-amber-200">
-                  Draft circle
-                </p>
-                <p className="mt-0.5 text-[11px] text-amber-800/80 dark:text-amber-300/80">
-                  Publish this circle before members can contribute.
-                </p>
-              </div>
-              <PublishCommitteeButton committeeId={id} />
-            </div>
-          </div>
-        )}
-
-        {committee.status === "draft" &&
-          committee.turnMode === "fixed" &&
-          isAdmin && (
-            <DraftTurnOrderManager committeeId={id} members={members} />
-          )}
-
-        {committee.status === "active" && (
-          <div className="rounded-[var(--card-radius)] bg-card p-3.5 ring-1 ring-foreground/[0.06] shadow-[0_10px_26px_-20px_rgba(20,16,31,0.1)]">
-            <div className="flex items-baseline justify-between">
-              <p className="text-[0.8rem] font-semibold">
-                Round {committee.currentRound}
-                <span className="text-muted-foreground">
-                  {" "}
-                  of {committee.totalRounds}
-                </span>
-              </p>
-              <p className="font-heading text-lg font-bold tabular text-primary">
-                {progress}%
-              </p>
-            </div>
-            <Progress value={progress} className="mt-2 h-1.5" />
-          </div>
-        )}
-
-        <div className="rounded-2xl bg-card px-3.5 ring-1 ring-foreground/[0.06]">
-          <div className="divide-y divide-border/60">
-            {committee.admin && typeof committee.admin === "object" && (
-              <SpecRow label="Created by">
-                <div className="flex items-center justify-end gap-1.5">
-                  <GradientAvatar
-                    name={committee.admin.name || "Admin"}
-                    image={committee.admin.image}
-                    size="xs"
-                  />
-                  <span>{committee.admin.name}</span>
-                </div>
-              </SpecRow>
-            )}
-            <SpecRow label="Visibility">{committee.visibility}</SpecRow>
-            <SpecRow label="Turn order">
-              {committee.turnMode || "random"}
-            </SpecRow>
-            <SpecRow label="Payment due">
-              {committee.paymentDueDay}
-              {ordinal(committee.paymentDueDay)} of each period
-            </SpecRow>
-            {committee.gracePeriodDays > 0 && (
-              <SpecRow label="Grace period">
-                {committee.gracePeriodDays} days
-              </SpecRow>
-            )}
-            {committee.startDate && (
-              <SpecRow label="Start date">
-                {formatDate(committee.startDate)}
-              </SpecRow>
-            )}
-            <SpecRow label="Created">{formatDate(committee.createdAt)}</SpecRow>
-          </div>
-        </div>
-
-        {committee.rules && (
-          <div className="space-y-2">
-            <SectionHeader title="Circle rules" />
-            <div className="rounded-2xl bg-card p-3.5 ring-1 ring-foreground/[0.06]">
-              <div className="flex gap-2.5">
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-primary-soft text-primary">
-                  <Shield className="h-4 w-4" />
-                </div>
-                <p className="whitespace-pre-wrap text-[0.8rem] leading-relaxed text-muted-foreground">
-                  {committee.rules}
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
     </>
   );
 }
