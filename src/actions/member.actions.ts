@@ -249,7 +249,8 @@ export async function inviteMember(
 
 export async function addCommitteeMember(
   committeeId: string,
-  email: string
+  email: string,
+  details?: { name?: string; phone?: string }
 ): Promise<ApiResponse<{ memberId: string; userCreated: boolean }>> {
   try {
     const session = await auth();
@@ -285,10 +286,12 @@ export async function addCommitteeMember(
     let userCreated = false;
 
     if (!user) {
-      const displayName = normalizedEmail.split("@")[0];
+      const displayName =
+        details?.name?.trim() || normalizedEmail.split("@")[0];
       user = await User.create({
         email: normalizedEmail,
         name: displayName,
+        phone: details?.phone?.trim() || undefined,
         provider: "credentials",
         status: "active",
       });

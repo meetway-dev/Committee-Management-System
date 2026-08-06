@@ -13,3 +13,16 @@ export const inviteMemberSchema = z
   });
 
 export type InviteMemberInput = z.infer<typeof inviteMemberSchema>;
+
+export const manualMemberSchema = z.object({
+  committeeId: z.string().min(1, "Committee is required"),
+  name: z.string().min(1, "Name is required").max(80, "Name is too long"),
+  email: z.string().email("Invalid email address"),
+  phone: z
+    .string()
+    .max(20, "Phone number is too long")
+    .optional()
+    .or(z.literal("")),
+});
+
+export type ManualMemberInput = z.infer<typeof manualMemberSchema>;
