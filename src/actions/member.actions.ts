@@ -96,8 +96,11 @@ export async function setCommitteeTurnOrder(
 
     const committee = await Committee.findById(committeeId);
     if (!committee) return { success: false, error: "Committee not found" };
-    if (committee.status !== "draft") {
-      return { success: false, error: "Turn order can only be updated while committee is in draft" };
+    if (committee.status !== "draft" && committee.status !== "active") {
+      return {
+        success: false,
+        error: "Turn order can only be updated while committee is in draft or active",
+      };
     }
 
     const membership = await CommitteeMember.findOne({
@@ -113,7 +116,7 @@ export async function setCommitteeTurnOrder(
     const members = await CommitteeMember.find({
       committee: committeeId,
       status: "active",
-    });
+    }).sort({ turnNumber: 1 });
 
     if (members.length !== memberIds.length) {
       return { success: false, error: "Member list mismatch" };
@@ -122,6 +125,24 @@ export async function setCommitteeTurnOrder(
     const memberSet = new Set(members.map((member) => member._id.toString()));
     for (const id of memberIds) {
       if (!memberSet.has(id)) {
+        return { success: false, error: "Invalid member order" };
+      }
+    }
+
+    const lockedCount = Math.max(0, committee.currentRound - 1);
+    const lockedMembers = members.slice(0, lockedCount);
+
+    for (let i = 0; i < lockedMembers.length; i++) {
+      if (memberIds[i] !== lockedMembers[i]._id.toString()) {
+        return { success: false, error: "Past turns cannot be changed" };
+      }
+    }
+
+    const movableSet = new Set(
+      members.slice(lockedCount).map((member) => member._id.toString())
+    );
+    for (let i = lockedCount; i < memberIds.length; i++) {
+      if (!movableSet.has(memberIds[i])) {
         return { success: false, error: "Invalid member order" };
       }
     }

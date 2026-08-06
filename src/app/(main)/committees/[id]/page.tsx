@@ -10,8 +10,8 @@ import { StatusBadge } from "@/components/shared/status-badge";
 import { buttonVariants } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { DraftTurnOrderManager } from "@/features/committee/draft-turn-order-manager";
 import { PublishCommitteeButton } from "@/features/committee/publish-committee-button";
+import { TurnOrderManager } from "@/features/committee/turn-order-manager";
 import { MemberRemoveButton } from "@/features/member/member-remove-button";
 import { MonthlyCollection } from "@/features/payment/monthly-collection";
 import { cn } from "@/lib/utils";
@@ -103,7 +103,6 @@ export default async function CommitteeDetailPage({ params }: PageProps) {
   const poolAmount = committee.contributionAmount * committee.maxMembers;
   const isAdmin = committee.userRole === "admin";
   const assignedMembersLabel = `${activeMemberCount}/${committee.maxMembers} seats`;
-  const assignedMembersCaption = `${activeMemberCount} assigned member${activeMemberCount === 1 ? "" : "s"}`;
 
   return (
     <>
@@ -213,12 +212,6 @@ export default async function CommitteeDetailPage({ params }: PageProps) {
               </div>
             </div>
           )}
-
-          {committee.status === "draft" &&
-            committee.turnMode === "fixed" &&
-            isAdmin && (
-              <DraftTurnOrderManager committeeId={id} members={members} />
-            )}
 
           {committee.status === "active" && (
             <div className="rounded-[var(--card-radius)] bg-card p-3.5 ring-1 ring-foreground/[0.06] shadow-[0_10px_26px_-20px_rgba(20,16,31,0.1)]">
@@ -388,62 +381,14 @@ export default async function CommitteeDetailPage({ params }: PageProps) {
               description="Turns are scheduled once the circle starts."
             />
           ) : (
-            <div className="space-y-2">
-              {[...memberList]
-                .sort((a, b) => a.turnNumber - b.turnNumber)
-                .map((member) => {
-                  const isCurrent = member.turnNumber === committee.currentRound;
-                  const isPast = member.turnNumber < committee.currentRound;
-
-                  return (
-                    <div
-                      key={member._id}
-                      className={cn(
-                        "flex items-center gap-2.5 rounded-2xl p-2.5 ring-1",
-                        isCurrent
-                          ? "bg-primary-soft ring-primary/40"
-                          : "bg-card ring-foreground/[0.06]"
-                      )}
-                    >
-                      <div
-                        className={cn(
-                          "flex h-8 w-8 shrink-0 items-center justify-center rounded-xl text-[0.8rem] font-bold tabular",
-                          isCurrent
-                            ? "bg-primary text-primary-foreground"
-                            : isPast
-                            ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300"
-                            : "bg-muted text-muted-foreground"
-                        )}
-                      >
-                        {member.turnNumber}
-                      </div>
-                      <GradientAvatar
-                        name={member.user?.name || "Member"}
-                        image={member.user?.image}
-                        size="sm"
-                      />
-                      <p className="min-w-0 flex-1 truncate text-[0.8rem] font-semibold">
-                        {member.user?.name || "Unknown"}
-                      </p>
-                      <div className="shrink-0 text-right">
-                        <p className="text-[0.8rem] font-bold leading-tight tabular">
-                          {formatCurrency(committee.contributionAmount, committee.currency)}
-                        </p>
-                        <p className="mt-0.5 text-[10px] text-muted-foreground">
-                          {isPast
-                            ? "Received"
-                            : isCurrent
-                            ? "Current"
-                            : "Upcoming"}
-                        </p>
-                        <p className="text-[10px] text-muted-foreground">
-                          Contribution
-                        </p>
-                      </div>
-                    </div>
-                  );
-                })}
-            </div>
+            <TurnOrderManager
+              committeeId={id}
+              currentRound={committee.currentRound}
+              currency={committee.currency}
+              contributionAmount={committee.contributionAmount}
+              isAdmin={isAdmin}
+              members={memberList}
+            />
           )}
         </TabsContent>
       </Tabs>
