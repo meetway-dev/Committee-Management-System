@@ -275,7 +275,7 @@ export default function SettingsForm({ committee, members, committeeId }: Settin
                     <Label htmlFor="currency">Currency</Label>
                     <Select
                       value={currencyValue}
-                      onValueChange={(value) => setValue("currency", value)}
+                      onValueChange={(value) => setValue("currency", value ?? "")}
                     >
                       <SelectTrigger className="w-full">
                         <SelectValue />
