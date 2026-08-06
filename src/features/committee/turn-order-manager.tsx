@@ -5,7 +5,14 @@ import { GradientAvatar } from "@/components/shared/gradient-avatar";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { formatCurrency } from "@/utils/format";
-import { ArrowDown, ArrowUp, Loader2, Lock, RotateCcw } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowUp,
+  Dices,
+  Loader2,
+  Lock,
+  RotateCcw,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
@@ -23,12 +30,14 @@ interface TurnOrderManagerProps {
   currency: string;
   contributionAmount: number;
   isAdmin: boolean;
+  turnMode: "fixed" | "random";
   members: TurnMember[];
 }
 
 /**
  * Interactive turn schedule. Past turns (already paid out) are locked in
  * place; the admin can reorder the current and upcoming turns and save.
+ * In "random" mode a shuffle button randomizes the pending turns.
  * Non-admins see a read-only schedule.
  */
 export function TurnOrderManager({
@@ -37,19 +46,24 @@ export function TurnOrderManager({
   currency,
   contributionAmount,
   isAdmin,
+  turnMode,
   members,
 }: TurnOrderManagerProps) {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
   const lockedCount = Math.max(0, currentRound - 1);
 
-  const [order, setOrder] = useState<TurnMember[]>(() =>
-    [...members].sort((a, b) => a.turnNumber - b.turnNumber)
+  const originalOrder = useMemo(
+    () => [...members].sort((a, b) => a.turnNumber - b.turnNumber),
+    [members]
   );
 
+  const [order, setOrder] = useState<TurnMember[]>(originalOrder);
+
   const hasChanges = useMemo(
-    () => order.some((member, index) => member.turnNumber !== index + 1),
-    [order]
+    () =>
+      order.some((member, index) => member._id !== originalOrder[index]?._id),
+    [order, originalOrder]
   );
 
   function move(index: number, direction: "up" | "down") {
@@ -64,12 +78,25 @@ export function TurnOrderManager({
         updated[nextIndex],
         updated[index],
       ];
-      return updated.map((member, i) => ({ ...member, turnNumber: i + 1 }));
+      return updated;
+    });
+  }
+
+  function handleShuffle() {
+    setOrder((current) => {
+      const updated = [...current];
+      const head = updated.slice(0, lockedCount);
+      const tail = updated.slice(lockedCount);
+      for (let i = tail.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [tail[i], tail[j]] = [tail[j], tail[i]];
+      }
+      return [...head, ...tail];
     });
   }
 
   function handleReset() {
-    setOrder([...members].sort((a, b) => a.turnNumber - b.turnNumber));
+    setOrder(originalOrder);
   }
 
   async function handleSave() {
@@ -106,7 +133,11 @@ export function TurnOrderManager({
       {isAdmin && (
         <div className="flex items-center gap-2 rounded-xl bg-muted/50 px-3 py-2 text-[11px] font-medium text-muted-foreground">
           <Lock className="h-3.5 w-3.5 shrink-0" />
-          Past turns are locked. You can reorder the current and upcoming turns.
+          <span>Past turns are locked. You can reorder the current and upcoming turns.</span>
+          <span className="ml-auto inline-flex shrink-0 items-center gap-1 rounded-full bg-card px-2 py-0.5 font-semibold capitalize text-foreground ring-1 ring-foreground/[0.08]">
+            <Dices className="h-3 w-3 text-primary" />
+            {turnMode}
+          </span>
         </div>
       )}
 
@@ -194,7 +225,7 @@ export function TurnOrderManager({
       </div>
 
       {isAdmin && (
-        <div className="flex items-center justify-end gap-2">
+        <div className="flex flex-wrap items-center justify-end gap-2">
           {hasChanges && (
             <Button
               type="button"
@@ -205,6 +236,19 @@ export function TurnOrderManager({
             >
               <RotateCcw className="h-3.5 w-3.5" />
               Reset
+            </Button>
+          )}
+          {turnMode === "random" && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={handleShuffle}
+              disabled={saving}
+              className="gap-1.5"
+            >
+              <Dices className="h-3.5 w-3.5" />
+              Shuffle
             </Button>
           )}
           <Button

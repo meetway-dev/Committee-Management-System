@@ -362,7 +362,7 @@ export default async function CommitteeDetailPage({ params }: PageProps) {
         <TabsContent value="turns" className="mt-2.5 space-y-2">
           <SectionHeader
             title="Turn schedule"
-            caption={`Payout order for ${memberList.length} assigned member${memberList.length === 1 ? "" : "s"}`}
+            caption={`Payout order for ${memberList.length} assigned member${memberList.length === 1 ? "" : "s"} · ${committee.turnMode === "random" ? "Random" : "Fixed"} order`}
           />
           {memberList.length === 0 ? (
             <EmptyState
@@ -372,11 +372,15 @@ export default async function CommitteeDetailPage({ params }: PageProps) {
             />
           ) : (
             <TurnOrderManager
+              key={memberList
+                .map((m) => `${m._id}:${m.turnNumber}`)
+                .join(",")}
               committeeId={id}
               currentRound={committee.currentRound}
               currency={committee.currency}
               contributionAmount={committee.contributionAmount}
               isAdmin={isAdmin}
+              turnMode={committee.turnMode}
               members={memberList}
             />
           )}
