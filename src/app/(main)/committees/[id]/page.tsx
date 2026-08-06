@@ -14,14 +14,12 @@ import { DraftTurnOrderManager } from "@/features/committee/draft-turn-order-man
 import { PublishCommitteeButton } from "@/features/committee/publish-committee-button";
 import { MemberRemoveButton } from "@/features/member/member-remove-button";
 import { MonthlyCollection } from "@/features/payment/monthly-collection";
-import { PaymentActions } from "@/features/payment/payment-actions";
 import { cn } from "@/lib/utils";
 import { formatCurrency, formatDate } from "@/utils/format";
 import {
     ArrowLeft,
     Calendar,
     Clock,
-    CreditCard,
     Settings,
     Shield,
     TrendingUp,
@@ -157,19 +155,6 @@ export default async function CommitteeDetailPage({ params }: PageProps) {
           Read-only access for this circle. Only the admin can manage members, settings, and payment records.
         </div>
       )}
-
-      <MonthlyCollection
-        committeeId={id}
-        currency={committee.currency}
-        contributionAmount={committee.contributionAmount}
-        frequency={committee.frequency}
-        startDate={committee.startDate ? String(committee.startDate) : null}
-        memberCount={activeMemberCount}
-        currentRound={committee.currentRound}
-        isAdmin={isAdmin}
-        members={memberList}
-        payments={paymentList}
-      />
 
       <Tabs defaultValue="overview">
         <TabsList className="w-full">
@@ -376,94 +361,18 @@ export default async function CommitteeDetailPage({ params }: PageProps) {
 
         {/* Payments */}
         <TabsContent value="payments" className="mt-2.5 space-y-3">
-          {isAdmin && (
-            <div className="flex items-center gap-3 rounded-[var(--card-radius)] border border-primary/15 bg-primary-soft/60 p-3.5">
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary-soft text-primary">
-                <CreditCard className="h-4 w-4" />
-              </span>
-              <div className="min-w-0 flex-1">
-                <p className="text-[0.8rem] font-semibold">Collect payments</p>
-                <p className="mt-0.5 text-[11px] text-muted-foreground">
-                  Use the Monthly collection panel above to record payments for
-                  each period.
-                </p>
-              </div>
-            </div>
-          )}
-
-          <div className="space-y-2">
-            <SectionHeader
-              title="Payment history"
-              caption={`${paymentList.length} record${
-                paymentList.length === 1 ? "" : "s"
-              }`}
-            />
-            {paymentList.length === 0 ? (
-              <EmptyState
-                icon={CreditCard}
-                title="No payments yet"
-                description="Payments appear here once members start contributing."
-              />
-            ) : (
-              <div className="rounded-2xl bg-card p-1.5 ring-1 ring-foreground/[0.06]">
-                <ListGroup>
-                  {paymentList.map((payment) => (
-                    <ListRow
-                      key={payment._id}
-                      leading={
-                        <GradientAvatar
-                          name={payment.user?.name || "Member"}
-                          image={payment.user?.image}
-                          size="md"
-                        />
-                      }
-                      title={payment.user?.name || "Unknown"}
-                      caption={
-                        <span className="capitalize">
-                          {`Round ${payment.round}${
-                            payment.paymentMethod
-                              ? ` · ${payment.paymentMethod.replace(/-/g, " ")}`
-                              : ""
-                          } · ${formatDate(payment.createdAt)}`}
-                        </span>
-                      }
-                      value={formatCurrency(payment.amount, committee.currency)}
-                      trailing={
-                        <div className="flex items-center gap-1.5">
-                          {payment.proofImage && (
-                            <a
-                              href={payment.proofImage}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="shrink-0 overflow-hidden rounded-lg ring-1 ring-foreground/10 transition-opacity hover:opacity-80"
-                              aria-label={`View payment proof from ${
-                                payment.user?.name || "member"
-                              }`}
-                            >
-                              {/* eslint-disable-next-line @next/next/no-img-element */}
-                              <img
-                                src={payment.proofImage}
-                                alt=""
-                                className="h-8 w-8 object-cover"
-                              />
-                            </a>
-                          )}
-                          <StatusBadge status={payment.status} dot />
-                          {isAdmin && (
-                            <PaymentActions
-                              paymentId={payment._id}
-                              paymentStatus={payment.status}
-                              isAdmin={true}
-                            />
-                          )}
-                        </div>
-                      }
-                    />
-                  ))}
-                </ListGroup>
-              </div>
-            )}
-          </div>
+          <MonthlyCollection
+            committeeId={id}
+            currency={committee.currency}
+            contributionAmount={committee.contributionAmount}
+            frequency={committee.frequency}
+            startDate={committee.startDate ? String(committee.startDate) : null}
+            memberCount={activeMemberCount}
+            currentRound={committee.currentRound}
+            isAdmin={isAdmin}
+            members={memberList}
+            payments={paymentList}
+          />
         </TabsContent>
 
         {/* Turns */}
