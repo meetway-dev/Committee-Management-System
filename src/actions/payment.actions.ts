@@ -196,6 +196,7 @@ export async function adminRecordPayment(
   data: {
     userId: string;
     amount: number;
+    round?: number;
     paymentMethod?: string;
     proofImage?: string;
     notes?: string;
@@ -229,6 +230,23 @@ export async function adminRecordPayment(
 
     if (!targetMember) return { success: false, error: "Member not found" };
 
+    const round = data.round ?? committee.currentRound;
+    if (!Number.isInteger(round) || round < 1) {
+      return { success: false, error: "Invalid round" };
+    }
+
+    const existing = await Payment.findOne({
+      committee: committeeId,
+      member: targetMember._id,
+      round,
+    });
+    if (existing) {
+      return {
+        success: false,
+        error: `Payment already recorded for this member in round ${round}`,
+      };
+    }
+
     const paymentDate = data.paidDate ? new Date(data.paidDate) : new Date();
     if (Number.isNaN(paymentDate.getTime())) {
       return { success: false, error: "Invalid payment date" };
@@ -238,7 +256,7 @@ export async function adminRecordPayment(
       committee: committeeId,
       member: targetMember._id,
       user: data.userId,
-      round: committee.currentRound,
+      round,
       amount: data.amount,
       dueDate: paymentDate,
       paidDate: paymentDate,

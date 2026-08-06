@@ -13,7 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DraftTurnOrderManager } from "@/features/committee/draft-turn-order-manager";
 import { PublishCommitteeButton } from "@/features/committee/publish-committee-button";
 import { MemberRemoveButton } from "@/features/member/member-remove-button";
-import { AdminRecordPayment } from "@/features/payment/admin-record-payment";
+import { MonthlyCollection } from "@/features/payment/monthly-collection";
 import { PaymentActions } from "@/features/payment/payment-actions";
 import { cn } from "@/lib/utils";
 import { formatCurrency, formatDate } from "@/utils/format";
@@ -47,6 +47,7 @@ interface DetailMember {
 
 interface DetailPayment {
   _id: string;
+  member: string;
   user?: { name: string; image?: string };
   amount: number;
   round: number;
@@ -156,6 +157,19 @@ export default async function CommitteeDetailPage({ params }: PageProps) {
           Read-only access for this circle. Only the admin can manage members, settings, and payment records.
         </div>
       )}
+
+      <MonthlyCollection
+        committeeId={id}
+        currency={committee.currency}
+        contributionAmount={committee.contributionAmount}
+        frequency={committee.frequency}
+        startDate={committee.startDate ? String(committee.startDate) : null}
+        memberCount={activeMemberCount}
+        currentRound={committee.currentRound}
+        isAdmin={isAdmin}
+        members={memberList}
+        payments={paymentList}
+      />
 
       <Tabs defaultValue="overview">
         <TabsList className="w-full">
@@ -363,11 +377,18 @@ export default async function CommitteeDetailPage({ params }: PageProps) {
         {/* Payments */}
         <TabsContent value="payments" className="mt-2.5 space-y-3">
           {isAdmin && (
-            <AdminRecordPayment
-              committeeId={id}
-              members={members}
-              contributionAmount={committee.contributionAmount}
-            />
+            <div className="flex items-center gap-3 rounded-[var(--card-radius)] border border-primary/15 bg-primary-soft/60 p-3.5">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary-soft text-primary">
+                <CreditCard className="h-4 w-4" />
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="text-[0.8rem] font-semibold">Collect payments</p>
+                <p className="mt-0.5 text-[11px] text-muted-foreground">
+                  Use the Monthly collection panel above to record payments for
+                  each period.
+                </p>
+              </div>
+            </div>
           )}
 
           <div className="space-y-2">
