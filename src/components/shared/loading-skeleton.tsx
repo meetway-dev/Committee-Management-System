@@ -2,29 +2,47 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export function DashboardSkeleton() {
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       <div className="flex items-center justify-between">
         <div className="space-y-2">
-          <Skeleton className="h-3 w-24" />
-          <Skeleton className="h-5 w-36" />
+          <Skeleton className="h-3 w-40" />
+          <Skeleton className="h-5 w-32" />
         </div>
-        <Skeleton className="h-9 w-9 rounded-full" />
+        <Skeleton className="h-9 w-24 rounded-full" />
       </div>
 
-      <Skeleton className="h-[132px] w-full rounded-2xl" />
+      <Skeleton className="h-[176px] w-full rounded-3xl" />
 
-      <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-2.5 lg:grid-cols-4">
         {Array.from({ length: 4 }).map((_, i) => (
-          <Skeleton key={i} className="h-[86px] rounded-2xl" />
+          <Skeleton key={i} className="h-[92px] rounded-[var(--card-radius)]" />
         ))}
       </div>
 
-      <Skeleton className="h-[104px] w-full rounded-2xl" />
-      <Skeleton className="h-[92px] w-full rounded-2xl" />
+      <div className="no-scrollbar flex gap-2 overflow-hidden">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <Skeleton key={i} className="h-[72px] w-[68px] shrink-0 rounded-2xl" />
+        ))}
+      </div>
 
-      <div className="space-y-2">
-        <Skeleton className="h-4 w-32" />
-        <Skeleton className="h-[180px] w-full rounded-2xl" />
+      <div className="grid gap-3 lg:grid-cols-3">
+        <div className="space-y-3 lg:col-span-2">
+          <Skeleton className="h-[220px] w-full rounded-[var(--card-radius)]" />
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-32" />
+            <Skeleton className="h-[240px] w-full rounded-[var(--card-radius)]" />
+          </div>
+        </div>
+        <div className="space-y-3">
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-24" />
+            <Skeleton className="h-[220px] w-full rounded-[var(--card-radius)]" />
+          </div>
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-28" />
+            <Skeleton className="h-[200px] w-full rounded-[var(--card-radius)]" />
+          </div>
+        </div>
       </div>
     </div>
   );
